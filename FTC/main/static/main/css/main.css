@@ -1,0 +1,16 @@
+
+.page-header {
+    background-color: #0099CC;
+    margin-top: 0;
+    padding: 1px 3px 1px;
+    text-align: center;
+}
+
+.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+    color: #ffffff;
+}
+
+.content {
+    margin-left: 15px;
+}
+

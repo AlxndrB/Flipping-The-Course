@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block head %}
+  Module Scherm
+{% endblock %}
+
+{% block body %}
+ <h2> hi {{full_name}} Logged in! </h2>
+ <p> Click <a href="logout/">here</a> to logout. </p>
+
+<div class="col-md-6">
+<div class="panel panel-default">
+	<div class="panel-heading">
+    	<h3 class="panel-title">Modules</h3>
+  	</div>
+  	<div class="panel-body">
+    	Panel content
+	</div>
+</div>
+</div>
+
+<div class="col-md-5">
+<div class="panel panel-default">
+	<div class="panel-heading">
+    	<h3 class="panel-title">Voortgang</h3>
+  	</div>
+  	<div class="panel-body">
+    	<div class="panel panel-default">
+		<div class="panel-heading">
+    		<h3 class="panel-title">Experience</h3>
+  		</div>
+		<div class="panel-body">
+	    	Basic panel example
+	  	</div>
+	</div>
+
+	<div class="panel panel-default">
+		<div class="panel-heading">
+    		<h3 class="panel-title">Bank</h3>
+  		</div>
+		<div class="panel-body">
+		Basic panel example
+	  	</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+    		<h3 class="panel-title">Agenda</h3>
+  		</div>
+		<div class="panel-body">
+		Basic panel example
+	  	</div>
+	</div>
+	</div>
+</div> 
+</div>
+{% endblock %}	
