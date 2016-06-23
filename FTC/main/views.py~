@@ -1,0 +1,51 @@
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.contrib import auth
+
+from matplotlib import pylab
+import PIL
+import PIL.Image
+import io
+import numpy as np
+
+
+def login(request):
+        username = request.POST.get('username', "")
+        password = request.POST.get('password', "")
+        if username != "":
+                user = auth.authenticate(username=username, password=password)
+
+                if user is not None:
+                        auth.login(request, user)
+                        return HttpResponseRedirect('/loggedin')
+                else:
+                        return render(request, 'registration/login.html', {'error_value': 'Invalid username or password'})
+        else:
+                return render(request, 'registration/login.html', {'error_value': ''})
+
+
+def loggedin(request):
+        if not request.user.is_authenticated():
+                return HttpResponseRedirect('/login')
+        else:
+
+                return render(request, 'main/loggedin.html', {'full_name': request.user.username, 'graphic': 'test'})
+
+
+def test(request):
+        pos = np.arange(10) + 2
+
+        pylab.barh(pos, (1, 2, 3, 4, 5, 6, 7, 8, 9, 10), align='center')
+        pylab.yticks(pos, ('#hcsm', '#ukmedlibs', '#ImmunoChat', '#HCLDR', '#ICTD2015', '#hpmglobal', '#BRCA', '#BCSM', '#BTSM', '#OTalk'))
+        pylab.xlabel('Popularidad')
+        pylab.ylabel('Hashtags')
+        pylab.title('Grafico de Hashtags')
+        pylab.subplots_adjust(left=0.21)
+        pylab.savefig('./main/static/main/user_piecharts/test.png')
+        pylab.close()
+        return render(request, 'main/Piechart.html', {'graphic': 'main/user_piecharts/test.png'})
+
+
+def logout(request):
+        auth.logout(request)
+        return HttpResponseRedirect('/login')

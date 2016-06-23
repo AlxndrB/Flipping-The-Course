@@ -12,7 +12,7 @@
     <p class="error">Sorry thats not a valid username or password </p>
   {% endif %}
 
-   <form class="form-horizontal" action="/login" method="post">{% csrf_token %}
+   <form class="form-horizontal" action="/auth" method="post">{% csrf_token %}
 
 	{% if error_value != '' %}
 	<div class="form-group">
