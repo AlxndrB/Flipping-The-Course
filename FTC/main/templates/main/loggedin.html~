@@ -13,7 +13,7 @@
 	<div class="panel-heading">
     	<h3 class="panel-title">Modules</h3>
   	</div>
-  	<div class="panel-body">
+  	<div class="panel-body col-md-offset-1">
     	{% include "main/Piechart.html" %}
 	</div>
 </div>
@@ -30,7 +30,7 @@
     		<h3 class="panel-title">Experience</h3>
   		</div>
 		<div class="panel-body">
-	    	Basic panel example
+	    	{% include "main/experience.html" %}
 	  	</div>
 	</div>
 
@@ -39,7 +39,7 @@
     		<h3 class="panel-title">Bank</h3>
   		</div>
 		<div class="panel-body">
-		Basic panel example
+		{% include "main/bank.html" %}€
 	  	</div>
 	</div>
 	<div class="panel panel-default">
