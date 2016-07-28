@@ -1,0 +1,21 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+
+class UserProfile(models.Model):
+        user = models.OneToOneField(User)
+
+        # additional information
+        gender = models.CharField(max_length=50)
+        bank = models.IntegerField('Bank', default=0)
+        exptotaal = models.IntegerField('Experience totaal', default=0)
+        expstudie = models.IntegerField('Experience studie', default=0)
+        expsociaal = models.IntegerField('Experience sociaal', default=0)
+        exptoekomst = models.IntegerField('Experience toekomst', default=0)
+
+        studie_weging = models.IntegerField('Experience studie', default=40)
+        sociaal_weging = models.IntegerField('Experience sociaal', default=30)
+        toekomst_weging = models.IntegerField('Experience toekomst', default=30)
+
+        def __unicode__(self):
+                return self.user.username
