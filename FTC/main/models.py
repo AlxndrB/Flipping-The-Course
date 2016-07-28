@@ -2,17 +2,17 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Modules(models.Modules):
+class Modules(models.Model):
         AREAS = (
-                ('studie'),
-                ('sociaal'),
-                ('toekomst'),
-                ('studiesociaal'),
-                ('studietoekomst'),
-                ('sociaaltoekomst')
+                ('studie', 'studie'),
+                ('sociaal', 'sociaal'),
+                ('toekomst', 'toekomst'),
+                ('studiesociaal', 'studiesociaal'),
+                ('studietoekomst', 'studietoekomst'),
+                ('sociaaltoekomst', 'sociaaltoekomst')
         )
 
-        gebied = models.CharField(choices=AREAS, default='studie')
+        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
         naam = models.CharField(max_length=50)
         omschrijving = models.TextField()
         time = models.IntegerField('Tijdsduur', default=4)
@@ -23,8 +23,11 @@ class Modules(models.Modules):
         experience_flex = models.IntegerField('Flexibele exp', default=100)
         factor = models.DecimalField(max_digits=3, decimal_places=1)
 
+        def __str__(self):
+                return self.naam
 
-class Questions(models.Questions):
+
+class Questions(models.Model):
         CHOICES = (
                 ('Ja', 'Ja'),
                 ('Nee', 'Nee'),
@@ -32,7 +35,10 @@ class Questions(models.Questions):
         )
 
         question = models.TextField()
-        answers = models.CharField(choices=CHOICES, default='WN')
+        answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
+
+        def __str__(self):
+                return self.question
 
 
 class UserProfile(models.Model):
@@ -54,13 +60,13 @@ class UserProfile(models.Model):
         exp_toek = models.IntegerField('Experience toekomst', default=0)
 
         # Weging voor piechart enzo
-        weging_stud = models.IntegerField('Experience studie', default=40)
-        weging_soc = models.IntegerField('Experience sociaal', default=30)
-        weging_toek = models.IntegerField('Experience toekomst', default=30)
+        weging_stud = models.IntegerField('Weging studie', default=40)
+        weging_soc = models.IntegerField('Weging sociaal', default=30)
+        weging_toek = models.IntegerField('Weging toekomst', default=30)
 
         # relations bitches
         modules = models.ManyToManyField(Modules)
         questions = models.ManyToManyField(Questions)
 
-        def __unicode__(self):
+        def __str__(self):
                 return self.user.username

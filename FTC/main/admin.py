@@ -1,3 +1,6 @@
 from django.contrib import admin
+from main.models import UserProfile, Questions, Modules
 
-# Register your models here.
+admin.site.register(UserProfile)
+admin.site.register(Questions)
+admin.site.register(Modules)
