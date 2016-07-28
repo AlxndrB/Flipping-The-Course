@@ -1,0 +1,70 @@
+{% load staticfiles%} 
+
+<style>
+
+.button_1 {
+    position:absolute;
+    top:{{y_soc_stud}}px;
+    left:{{x_soc_stud}}px;
+/*    width:30px;
+    height:30px*/
+}
+.button_2 {
+    position:absolute;
+    top:{{y_stud_toek}}px;
+    left:{{x_stud_toek}}px;
+/*    width:30px;
+    height:30px;*/
+}
+.button_3 {
+    position:absolute;
+    top:{{y_toek_soc}}px;
+    left:{{x_toek_soc}}px;
+/*    width:30px;
+    height:30px*/
+}
+.button_4 {
+    position:absolute;
+    top:{{y_stud}}px;
+    left:{{x_stud}}px;
+/*    width:30px;
+    height:30px;*/
+}
+.button_5 {
+    position:absolute;
+    top:{{y_toek}}px;
+    left:{{x_toek}}px;
+/*    width:30px;
+    height:30px*/
+}
+.button_6 {
+    position:absolute;
+    top:{{y_soc}}px;
+    left:{{x_soc}}px;
+/*    width:30px;
+    height:30px;*/
+}
+</style>
+
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel-body">
+				<div id="img_container">
+				    <img src="{% static test %}{{graphic}}" >
+				    <button class="button_1"> soc/stud </button>
+				    <button class="button_2"> stud/toek </button>
+				    <button class="button_3"> toek/soc </button>
+
+				    <button class="button_4"> stud </button>
+					<button class="button_5"> toek </button>
+				    <button class="button_6"> soc </button>
+
+
+				</div>
+            </div>
+        </div>
+    </div>
+</div>

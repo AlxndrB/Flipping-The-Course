@@ -1,0 +1,77 @@
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.contrib import auth
+from matplotlib import pylab
+from django.db import models
+from main.models import UserProfile
+#from django.contrib.auth.models import User
+
+
+def MakePieChart(request):
+        # make a square figure and axes
+        pylab.figure(1, figsize=(6, 6))
+        username = request.user.username
+
+        # The slices will be ordered and plotted counter-clockwise.
+        labels = 'Studie', 'Werk', 'Student'
+        fracs = [40, 30, 30]
+        # fracs = [UserProfile.studie_weging,UserProfile.sociaal_weging,UserProfile.toekomst_weging]
+        colors = ['gold', 'lightskyblue', 'lightcoral']
+
+        pylab.pie(fracs,
+                  labels=labels,
+                  colors=colors,
+                  shadow=False,
+                  startangle=90)
+        # The default startangle is 0, which would start
+        # the Frogs slice on the x-axis.  With startangle=90,
+        # everything is rotated counter-clockwise by 90 degrees,
+        # so the plotting starts on the positive y-axis.
+
+        pylab.savefig('./main/static/main/user_piecharts/' + username + '.png')
+        pylab.close()
+        string = 'main/user_piecharts/' + username + '.png'
+        return string
+
+# ===========  start for views
+
+
+def login(request):
+        if request.user.is_authenticated():
+                return HttpResponseRedirect('/loggedin')
+        else:
+                username = request.POST.get('username', "")
+                password = request.POST.get('password', "")
+                if username != "":
+                        user = auth.authenticate(username=username,
+                                                 password=password)
+                        if user is not None:
+                                auth.login(request, user)
+                                return HttpResponseRedirect('/loggedin')
+                        else:
+                                error = 'invalide username or password!'
+                                form = 'registration/login.html'
+                                return render(request,
+                                              form,
+                                              {'error_value': error})
+                else:
+                        form = 'registration/login.html'
+                        error = ''
+                        return render(request, form, {'error_value': error})
+
+
+def loggedin(request):
+        if not request.user.is_authenticated():
+                return HttpResponseRedirect('/login')
+        else:
+                username = request.user.username
+               # bank = request.UserProfile.bank
+                graphic = MakePieChart(request)
+                form = 'main/loggedin.html'
+                response = {'full_name': username, 'graphic': graphic, 'bank':'100'}
+                return render(request, form, response)
+
+
+def logout(request):
+        auth.logout(request)
+        return HttpResponseRedirect('/login')
