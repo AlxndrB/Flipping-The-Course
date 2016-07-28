@@ -15,13 +15,14 @@ class Modules(models.Model):
         gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
         naam = models.CharField(max_length=50)
         omschrijving = models.TextField()
-        time = models.IntegerField('Tijdsduur', default=4)
-        kosten = models.IntegerField('Kosten', default=100)
-        baten_vast = models.IntegerField('Vaste baten', default=100)
-        baten_flex = models.IntegerField('Flexibele baten', default=100)
-        experience_vast = models.IntegerField('Vaste exp', default=100)
-        experience_flex = models.IntegerField('Flexibele exp', default=100)
-        factor = models.DecimalField(max_digits=3, decimal_places=1)
+        tijd =  models.IntegerField('Tijdsduur', default=0)
+        kosten = models.IntegerField('Kosten', default=0)
+        baten_vast = models.IntegerField('Vaste baten', default=0)
+        baten_flex = models.IntegerField('Flexibele baten', default=0)
+        experience_vast = models.IntegerField('Vaste exp', default=0)
+        experience_flex = models.IntegerField('Flexibele exp', default=0)
+        factor = models.DecimalField(max_digits=3, decimal_places=1, default=0)
+        niveau = models.IntegerField('Niveau van course', default=1)
 
         def __str__(self):
                 return self.naam
@@ -34,8 +35,18 @@ class Questions(models.Model):
                 ('WN', 'Weet niet')
         )
 
+        AREAS = (
+                ('studie', 'studie'),
+                ('sociaal', 'sociaal'),
+                ('toekomst', 'toekomst'),
+                ('studiesociaal', 'studiesociaal'),
+                ('studietoekomst', 'studietoekomst'),
+                ('sociaaltoekomst', 'sociaaltoekomst')
+        )
+
         question = models.TextField()
         answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
+        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
 
         def __str__(self):
                 return self.question
@@ -58,6 +69,7 @@ class UserProfile(models.Model):
         exp_stud = models.IntegerField('Experience studie', default=0)
         exp_soc = models.IntegerField('Experience sociaal', default=0)
         exp_toek = models.IntegerField('Experience toekomst', default=0)
+        niveau = models.IntegerField('Niveau', default=1)
 
         # Weging voor piechart enzo
         weging_stud = models.IntegerField('Weging studie', default=40)
@@ -65,8 +77,8 @@ class UserProfile(models.Model):
         weging_toek = models.IntegerField('Weging toekomst', default=30)
 
         # relations bitches
-        modules = models.ManyToManyField(Modules)
-        questions = models.ManyToManyField(Questions)
+        modules = models.ManyToManyField(Modules, blank=True)
+        questions = models.ManyToManyField(Questions, blank=True)
 
         def __str__(self):
                 return self.user.username

@@ -2,7 +2,7 @@ from main.models import Questions, Modules
 
 # ========================================================= questions
 
-studie vragen
+# studie vragen
 q = Questions(
     question='Weet jij elke opleidingen er zijn?',
     gebied='studie'
@@ -133,7 +133,7 @@ p.save()
 
 p = Modules(
     gebied='studie',
-    naam='Een dag student',
+    naam='Eén dag student',
     omschrijving='Een dagje student zijn',
     tijd=8,
     kosten=120,
@@ -153,10 +153,10 @@ p = Modules(
     tijd=16,
     kosten=240,
     baten_vast=240,
-    baten_flex=,
+    # baten_flex=,
     experience_vast=192,
-    experience_flex=,
-    factor=,
+    # experience_flex=,
+    # factor=,
     niveau=2
 )
 p.save()
