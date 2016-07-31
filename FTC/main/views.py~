@@ -4,7 +4,7 @@ from django.contrib import auth
 from matplotlib import pylab
 from .models import Modules, Questions, UserProfile
 import numpy as np
-from .forms import UserProfileForm, QuestionForm
+from .forms import UserProfileForm, QuestionForm, ModuleForm
 
 
 def MakePieChart(request):
@@ -105,10 +105,13 @@ def loggedin(request):
                 firstname = request.user.userprofile.firstname
                 bank = request.user.userprofile.bank
                 graphic = MakePieChart(request)
+                modules = UserProfile.objects.get(firstname='empty')
+                modules = modules.modules.all()
                 form = 'main/loggedin.html'
                 response = {'full_name': username, 'graphic': graphic, 'bank': bank, 'firstname':firstname, 'x_soc_stud':  x_soc_stud, 'y_soc_stud': y_soc_stud,
                             'x_stud_toek':  x_stud_toek, 'y_stud_toek': y_stud_toek, 'x_toek_soc':  x_toek_soc, 'y_toek_soc': y_toek_soc, 'x_stud': x_stud, 'y_stud': y_stud,
-                            'x_toek': x_toek, 'y_toek': y_toek, 'x_soc': x_soc, 'y_soc': y_soc}
+                            'x_toek': x_toek, 'y_toek': y_toek, 'x_soc': x_soc, 'y_soc': y_soc,
+                            'modules': modules}
                 return render(request, form, response)
 
 

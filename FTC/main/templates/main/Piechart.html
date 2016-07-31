@@ -96,17 +96,43 @@
 	</table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-	 <button type="button" class="btn btn-primary" disabled>Kopen</button>
-	{% comment %}
-	{% if items.gebied == 'studie' %}
-	{% if user.userprofile.exp_{{gebied1}} < 40 %}
+	<button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+       	
+	{% for iter in "xxx" %}
+	{% cycle 'studie' 'toekomst' 'sociaal' as gebied silent %}
+	{% cycle user.userprofile.exp_stud user.userprofile.exp_toek user.userprofile.exp_soc as userexp silent%}
+	{% if items.gebied == gebied %}
+	{% if userexp < 40 %}
         <button type="button" class="btn btn-primary" disabled>Kopen</button>
 	{% else %}
 	<button type="button" class="btn btn-primary">Kopen</button>
 	{% endif %}
 	{% endif %}
-	{% endcomment %}
+	{% endfor %}
+
+	{% if items.gebied == 'studietoekomst' %}
+	{% if user.userprofile.exp_stud < 40 and user.userprofile.exp_toek < 40 %}
+        <button type="button" class="btn btn-primary" disabled>Kopen</button>
+	{% else %}
+	<button type="button" class="btn btn-primary">Kopen</button>
+	{% endif %}
+	{% endif %}
+
+	{% if items.gebied == 'studiesociaal' %}
+	{% if user.userprofile.exp_stud < 40 and user.userprofile.exp_soc < 40 %}
+        <button type="button" class="btn btn-primary" disabled>Kopen</button>
+	{% else %}
+	<button type="button" class="btn btn-primary">Kopen</button>
+	{% endif %}
+	{% endif %}
+
+	{% if items.gebied == 'sociaaltoekomst' %}
+	{% if user.userprofile.exp_soc < 40 and user.userprofile.exp_toek < 40 %}
+        <button type="button" class="btn btn-primary" disabled>Kopen</button>
+	{% else %}
+	<button type="button" class="btn btn-primary">Kopen</button>
+	{% endif %}
+	{% endif %}
 	
       </div>
     </div>
