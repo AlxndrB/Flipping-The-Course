@@ -4,7 +4,7 @@ from main.models import Questions, Modules
 
 # studie vragen
 q = Questions(
-    question='Weet jij elke opleidingen er zijn?',
+    question='Weet je welke opleidingen er zijn?',
     gebied='studie'
 )
 q.save()
@@ -14,19 +14,19 @@ q = Questions(
 )
 q.save()
 q = Questions(
-    question='Heb jij zicht op welke kennis en vaardigheden nodig zijn voor deze opleiding?',
+    question='Heb je zicht op welke kennis en vaardigheden er nodig zijn voor deze opleiding?',
     gebied='studie'
 )
 q.save()
 q = Questions(
-    question='Heb jij een idee van wat je leert bij deze opleiding?',
+    question='Heb je een idee van wat je leert bij deze opleiding?',
     gebied='studie'
 )
 q.save()
 
 # toekomst vragen
 q = Questions(
-    question='Weet jij welk werk jij later kan doen met deze opleiding?',
+    question='Weet je welk werk je later kan doen met deze opleiding?',
     gebied='toekomst'
 )
 q.save()
@@ -36,12 +36,12 @@ q = Questions(
 )
 q.save()
 q = Questions(
-    question='Weet jij (ongeveer) waar je kan gaan werken met deze opleiding?',
+    question='Weet je (ongeveer) waar je kan gaan werken met deze opleiding?',
     gebied='toekomst'
 )
 q.save()
 q = Questions(
-    question='Weet jij hoe snel je een baan vindt met deze opleding?',
+    question='Weet je hoe snel je een baan vindt met deze opleding?',
     gebied='toekomst'
 )
 q.save()
@@ -53,17 +53,17 @@ q = Questions(
 )
 q.save()
 q = Questions(
-    question='Heb jij het gevoel dat jij bij de studenten van deze opleiding past?',
+    question='Heb je het gevoel dat je bij de studenten van deze opleiding past?',
     gebied='sociaal'
 )
 q.save()
 q = Questions(
-    question='Heb jij zicht op wat je naast je opleiding kan doen?',
+    question='Heb je zicht op wat je naast je opleiding kan doen?',
     gebied='sociaal'
 )
 q.save()
 q = Questions(
-    question='Weet jij wat het \'studentenleven\' voor jou inhoudt?',
+    question='Weet je wat het \'studentenleven\' voor jou inhoudt?',
     gebied='sociaal'
 )
 q.save()
@@ -133,7 +133,7 @@ p.save()
 
 p = Modules(
     gebied='studie',
-    naam='Eén dag student',
+    naam='Een dag student',
     omschrijving='Een dagje student zijn',
     tijd=8,
     kosten=120,

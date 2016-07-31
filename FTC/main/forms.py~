@@ -1,0 +1,14 @@
+from django import forms
+from .models import UserProfile, Questions
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('firstname', 'lastname', 'questions',)
+
+
+class QuestionForm(forms.ModelForm):
+    class Meta:
+        model = Questions
+        fields = '__all__'

@@ -1,5 +1,0 @@
-{% load staticfiles%} 
-
-<img src="{% static test %}{{graphic}}" > 
-
-  <!-- {{graphic|safe}} -->
