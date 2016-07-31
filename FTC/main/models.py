@@ -47,6 +47,7 @@ class Questions(models.Model):
         question = models.TextField()
         answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
         gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
+        timestamp = models.DateTimeField(auto_now=True)
 
         def __str__(self):
                 return self.question
@@ -72,13 +73,13 @@ class UserProfile(models.Model):
         niveau = models.IntegerField('Niveau', default=1)
 
         # Weging voor piechart enzo
-        weging_stud = models.IntegerField('Weging studie', default=40)
-        weging_soc = models.IntegerField('Weging sociaal', default=30)
-        weging_toek = models.IntegerField('Weging toekomst', default=30)
+        weging_stud = models.IntegerField('Weging studie', default=100)
+        weging_soc = models.IntegerField('Weging sociaal', default=100)
+        weging_toek = models.IntegerField('Weging toekomst', default=100)
 
         # relations bitches
         modules = models.ManyToManyField(Modules, blank=True)
-        questions = models.ManyToManyField(Questions, blank=True)
+        questions = models.ManyToManyField(Questions)
 
         def __str__(self):
                 return self.user.username
