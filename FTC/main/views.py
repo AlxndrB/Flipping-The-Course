@@ -161,23 +161,71 @@ def vragen(request):
 
         return render(request, form, response)
 
+def weging(request):
+    Gebruiker = request.user.userprofile
+    firstname = Gebruiker.firstname
+    lastname = Gebruiker.lastname    
+
+    if request.method == "POST":
+        form_userprofile = UserProfileForm(request.POST, instance=Gebruiker)
+
+        weging_stud = form_userprofile['weging_stud'].value()
+        weging_toek = form_userprofile['weging_toek'].value()
+        weging_soc  = form_userprofile['weging_soc'].value()
+
+        if form_userprofile.is_valid():
+            form_userprofile.save();
+            return HttpResponseRedirect('/loggedin')
+
+        else:
+            form = 'main/weging.html'
+            response = {'firstname':firstname, 'lastname':lastname,
+                'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
+                'form_userprofile':form_userprofile,
+                }
+
+            return render(request, form, response)
+
+    else:
+        form_userprofile = UserProfileForm()
+        weging_stud = Gebruiker.weging_stud
+        weging_toek = Gebruiker.weging_toek
+        weging_soc = Gebruiker.weging_soc
+
+        form = 'main/weging.html'
+        response = {'firstname':firstname, 'lastname':lastname,
+            'Gebruiker':request.user.userprofile,
+            'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
+            'form_userprofile':form_userprofile,
+            }
+
+        return render(request, form, response)
+
+def docent(request):
+
+    form = 'main/docent.html'
+
+    form_userprofile = UserProfileForm()
+
+    if request.method == "POST":
+        form_userprofile = UserProfileForm(request.POST)
+        firstname = form_userprofile['firstname'].value()
+        lastname = form_userprofile['lastname'].value()
+
+
+
+    response = {'form_userprofile':form_userprofile,
+    }
+
+    return render(request, form, response)
+
+def test(request):
+    form = "main/test.html"
+
+    return render(request, form)
 
 def temp(request):
     form = UserProfileForm()
     firstname = request.user.userprofile.firstname
     response = {'form': form, 'firstname': firstname}
     return render(request, 'main/temp.html', response)
-
-def weging(request):
-    Gebruiker = request.user.userprofile
-    firstname = Gebruiker.firstname
-    weging_stud = Gebruiker.weging_stud
-    weging_toek = Gebruiker.weging_toek
-    weging_soc = Gebruiker.weging_soc
-
-    form = 'main/weging.html'
-    response = {'firstname':firstname,
-        'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
-        }
-
-    return render(request, form, response)

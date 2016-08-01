@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^loggedin', views.loggedin),
     url(r'^vragen', views.vragen),
     url(r'^temp', views.temp),
-    url(r'^wegin', views.weging)
+    url(r'^weging', views.weging),
+    url(r'^docent', views.docent),
+    url(r'^test', views.test)
 ]

@@ -5,7 +5,7 @@ from .models import UserProfile, Questions, Modules
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'lastname', 'questions',)
+        fields = ('firstname', 'lastname', 'questions', 'weging_stud', 'weging_toek', 'weging_soc')
 
 
 class QuestionForm(forms.ModelForm):
@@ -16,4 +16,4 @@ class QuestionForm(forms.ModelForm):
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Modules
-        fields = '__all__'
+        fields = ('naam', 'gebied', 'tijd', 'niveau',)

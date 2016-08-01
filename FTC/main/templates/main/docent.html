@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block head %}
+Docent pagina
+
+<!-- <div align="right" style="font-size=10px"> {{firstname}} <a href="logout/">logout</a> </div> -->
+
+<header id="header">
+<h6> <a href="logout/">logout</a>  </h6>
+</header>  
+ 
+{% endblock %}
+
+{% block body %}
+
+<form method="POST" class="post-form">{% csrf_token %}
+
+<div class="col-md-3">
+<div class="panel panel-default">
+	<div class="panel-heading">
+    	<h3 class="panel-title">Zoek</h3>
+  	</div>
+  	<div class="panel-body col-md-offset-1">
+  		Voornaam:<br>
+  		{{form_userprofile.firstname}} <br>
+  		Achternaam: <br>
+  		{{form_userprofile.lastname}} <br>
+  		<br>
+
+  		<button class="btn btn-primary" type="submit"> Zoeken </button>
+    	
+	</div>
+</div>
+</div>
+
+
+<div class="col-md-9">
+<div class="panel panel-default">
+	<div class="panel-heading">
+    	<h3 class="panel-title">Resultaten</h3>
+  	</div>
+  	<div class="panel-body col-md-offset-1">
+    	
+	</div>
+</div>
+</div>
+
+
+
+</form>
+
+
+{% endblock %}	
