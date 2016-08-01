@@ -62,6 +62,7 @@ def loggedin(request):
                 return HttpResponseRedirect('/login')
         else:
                 Gebruiker = request.user.userprofile
+                firstname = Gebruiker.firstname
 
                 # Determine the position of the buttons
                 x_origin = 300-10
@@ -105,7 +106,7 @@ def loggedin(request):
                 firstname = request.user.userprofile.firstname
                 bank = request.user.userprofile.bank
                 graphic = MakePieChart(request)
-                modules = UserProfile.objects.get(firstname='empty')
+                modules = UserProfile.objects.get(firstname=firstname)
                 modules = modules.modules.all()
                 form = 'main/loggedin.html'
                 response = {'full_name': username, 'graphic': graphic, 'bank': bank, 'firstname':firstname, 'x_soc_stud':  x_soc_stud, 'y_soc_stud': y_soc_stud,
@@ -166,3 +167,17 @@ def temp(request):
     firstname = request.user.userprofile.firstname
     response = {'form': form, 'firstname': firstname}
     return render(request, 'main/temp.html', response)
+
+def weging(request):
+    Gebruiker = request.user.userprofile
+    firstname = Gebruiker.firstname
+    weging_stud = Gebruiker.weging_stud
+    weging_toek = Gebruiker.weging_toek
+    weging_soc = Gebruiker.weging_soc
+
+    form = 'main/weging.html'
+    response = {'firstname':firstname,
+        'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
+        }
+
+    return render(request, form, response)

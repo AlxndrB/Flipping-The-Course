@@ -79,7 +79,7 @@ class UserProfile(models.Model):
 
         # relations bitches
         modules = models.ManyToManyField(Modules, blank=True)
-        questions = models.ManyToManyField(Questions)
+        questions = models.ManyToManyField(Questions, blank=True)
 
         def __str__(self):
                 return self.user.username

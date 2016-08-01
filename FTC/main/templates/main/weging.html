@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block head %}
+Wat vind je belangrijk?
+
+<div align="right" style="font-size=10px"> {{firstname}} <a href="logout/">logout</a> </div>
+ 
+{% endblock %}
+
+{% block body %}
+
+<script type="text/javascript">
+var bar, slider;
+$(document).ready(function() {
+ 	$("#stud_box").val($("#stud_box").val());
+
+});
+
+
+function init(){
+	bar_stud = document.getElementById('bar_stud');
+	slider_stud = document.getElementById('slider_stud');
+
+	bar_stud.addEventListener('mousedown', startSlide_stud, false);	
+	bar_stud.addEventListener('mouseup', stopSlide_stud, false);
+
+	stud_box = document.getElementById('stud_box')
+	stud_box.value = "{{weging_stud}}";
+
+}
+function startSlide_stud(event){
+	var set_perc = ((((event.clientX - bar_stud.offsetLeft) / bar_stud.offsetWidth)).toFixed(2));	
+	bar_stud.addEventListener('mousemove', moveSlide_stud, false);	
+	slider_stud.style.width = (set_perc * 100) + '%';
+	slider_stud.interHTML = set_perc + '%';	
+	stud_box.value = (set_perc * 100);
+}
+function moveSlide_stud(event){
+	var set_perc = ((((event.clientX - bar_stud.offsetLeft) / bar_stud.offsetWidth)).toFixed(2));
+	slider_stud.style.width = (set_perc * 100) + '%';
+	slider.interHTML = set_perc + '%';
+	stud_box.value = (set_perc * 100);
+}
+function stopSlide_stud(event){
+	var set_perc = ((((event.clientX - bar_stud.offsetLeft) / bar_stud.offsetWidth)).toFixed(2));
+	bar_stud.removeEventListener('mousemove', moveSlide_stud, false);
+	slider_stud.style.width = (set_perc * 100) + '%';
+	slider_stud.interHTML = set_perc + '%';
+	stud_box.value = (set_perc * 100);
+}
+</script>
+
+</head>
+<body onload='init()'>
+
+<div class="container">
+	Studie
+	<div class="progress">
+		<div id='bar_stud' style="position:relative; height:25px; width=50%">
+			<div id='slider_stud' class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width:100%" value="#stud_box">
+		  </div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+
+{% endblock %}	

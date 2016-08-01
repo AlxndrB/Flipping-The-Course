@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^logout', views.logout),
     url(r'^loggedin', views.loggedin),
     url(r'^vragen', views.vragen),
-    url(r'^temp', views.temp)
+    url(r'^temp', views.temp),
+    url(r'^wegin', views.weging)
 ]
