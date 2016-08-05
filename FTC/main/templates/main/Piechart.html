@@ -1,78 +1,13 @@
-{% load staticfiles%} 
-
-<style>
-
-.button_1 {
-    position:absolute;
-    top:{{y_soc_stud}}px;
-    left:{{x_soc_stud}}px;
-/*    width:30px;
-    height:30px*/
-}
-.button_2 {
-    position:absolute;
-    top:{{y_stud_toek}}px;
-    left:{{x_stud_toek}}px;
-/*    width:30px;
-    height:30px;*/
-}
-.button_3 {
-    position:absolute;
-    top:{{y_toek_soc}}px;
-    left:{{x_toek_soc}}px;
-/*    width:30px;
-    height:30px*/
-}
-.button_4 {
-    position:absolute;
-    top:{{y_stud}}px;
-    left:{{x_stud}}px;
-/*    width:30px;
-    height:30px;*/
-}
-.button_5 {
-    position:absolute;
-    top:{{y_toek}}px;
-    left:{{x_toek}}px;
-/*    width:30px;
-    height:30px*/
-}
-.button_6 {
-    position:absolute;
-    top:{{y_soc}}px;
-    left:{{x_soc}}px;
-/*    width:30px;
-    height:30px;*/
-}
-</style>
-
-<div class="container">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel-body">
-				<div id="img_container">
-				    <img src="{% static test %}{{graphic}}" >
-				    <button class="button_1" data-toggle="modal" data-target="#studiesociaalModal"> soc/stud </button>
-				    <button class="button_2" data-toggle="modal" data-target="#studietoekomstModal"> stud/toek </button>
-				    <button class="button_3" data-toggle="modal" data-target="#sociaaltoekomstModal"> toek/soc </button>
-
-				    <button class="button_4" data-toggle="modal" data-target="#studieModal"> stud </button>
-					<button class="button_5" data-toggle="modal" data-target="#toekomstModal"> toek </button>
-				    <button class="button_6" data-toggle="modal" data-target="#sociaalModal"> soc </button>
+<!-- {% load staticfiles%}  -->
 
 
-				</div>
-            </div>
-        </div>
-    </div>
-</div>
+   <!--  {{buy_excursie}} -->
+<!-- {% for items in modules %} -->
+<!-- 
+<div class="modal fade" id="{{items.id_module}}Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 
+<form method="POST" class="post-form">{% csrf_token %}
 
-
-<!-- Modal -->
-{% for items in modules %}
-
-<div class="modal fade" id="{{items.gebied}}Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -80,36 +15,446 @@
         <h4 class="modal-title" id="myModalLabel">{{items.naam}}</h4>
       </div>
       <div class="modal-body">
-	<table class="table table-condensed">
-	  <thead><tr>
-	      <th> Omschrijving </th>
-	      <th> Kosten </th>
-	      <th> Baten </th>
-	      <th> Tijdsduur </th>
-	  </tr></thead>
-	  <tbody><tr>
-	      <td> {{ items.omschrijving}} </td>
-	      <td class='danger'> {{ items.kosten }} </td>
-	      <td class='success'> 80{{ items.baten }} </td>
-	      <td> {{ items.tijd }} uur </td>
-	  </tr></tbody>
-	</table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
-	 <button type="button" class="btn btn-primary" disabled>Kopen</button>
-	{% comment %}
-	{% if items.gebied == 'studie' %}
-	{% if user.userprofile.exp_{{gebied1}} < 40 %}
-        <button type="button" class="btn btn-primary" disabled>Kopen</button>
-	{% else %}
-	<button type="button" class="btn btn-primary">Kopen</button>
-	{% endif %}
-	{% endif %}
-	{% endcomment %}
-	
+            <table class="table table-condensed">
+              <thead><tr>
+                  <th> Omschrijving </th>
+                  <th> Kosten </th>
+                  <th> Baten </th>
+                  <th> Tijdsduur </th>
+              </tr></thead>
+              <tbody><tr>
+                  <td> {{ items.omschrijving}} </td>
+                  <td class='danger'> {{ items.kosten }} </td>
+                  <td class='success'> 80{{ items.baten }} </td>
+                  <td> {{ items.tijd }} uur </td>
+              </tr></tbody>
+            </table>
+              </div>
+              <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                
+            {% for iter in "xxx" %}
+            {% cycle 'studie' 'toekomst' 'sociaal' as gebied silent %}
+            {% cycle user.userprofile.exp_stud user.userprofile.exp_toek user.userprofile.exp_soc as userexp silent%}
+            {% if items.gebied == gebied %}
+            {% if items in modules_user %}
+            <button type="button" class="btn btn-warning" disabled>Al gekocht</button>
+            {% else %}
+             {% if userexp < items.kosten_exp or user.userprofile.bank < items.kosten  %}
+                 <button type="button" class="btn btn-primary" disabled>Kopen</button>
+             {% else %}
+             <button type="button" class="btn btn-primary" action="main/loggedin.html" name="{{items.id_module}}" >Kopen</button>
+            
+             {% endif %}
+             {% endif %}
+            {% endif %}
+            {% endfor %}
+
+            {% if items.gebied == 'studietoekomst' %}
+            {% if items in modules_user %}
+            <button type="button" class="btn btn-primary" disabled>Kopen</button>
+            {% else %}
+             {% if user.userprofile.exp_stud < items.kosten_exp and user.userprofile.exp_toek < items.kosten_exp or user.userprofile.bank < items.kosten %}
+                 <button type="button" class="btn btn-primary" disabled>Kopen</button>
+             {% else %}
+             <button type="button" class="btn btn-primary" action="main/loggedin.html" name="{{items.id_module}}" >Kopen</button>
+             {% endif %}
+            {% endif %}
+            {% endif %}
+             
+            {% if items.gebied == 'studiesociaal' %}
+            {% if items in modules_user %}
+            <button type="button" class="btn btn-warning" disabled>Al gekocht</button>
+            {% else %}
+             {% if user.userprofile.exp_stud < items.kosten_exp and user.userprofile.exp_soc < items.kosten_exp  or user.userprofile.bank < items.kosten %}
+                 <button type="button" class="btn btn-primary" disabled>Kopen</button>
+             {% else %}
+             <button type="button" class="btn btn-primary" action="main/loggedin.html" name="{{items.id_module}}" >Kopen</button>
+             {% endif %}
+            {% endif %}
+            {% endif %}
+             
+            {% if items.gebied == 'sociaaltoekomst' %}
+            {% if items in modules_user %}
+            <button type="button" class="btn btn-warning" disabled>Al gekocht</button>
+            {% else %}
+             {% if user.userprofile.exp_soc < items.kosten_exp and user.userprofile.exp_toek < kosten_exp  or user.userprofile.bank < items.kosten %}
+                 <button type="button" class="btn btn-primary" disabled>Kopen</button>
+             {% else %}
+             <button type="button" class="btn btn-primary" name="{{items.id_module}}_update" id="kaas">Kopen</button>
+             {{buy_excursie.as_p}}
+             {% endif %}
+            {% endif %}
+            {% endif %} 
       </div>
     </div>
   </div>
+
+</form>
+
 </div>
+{% endfor %} -->
+
+
+
+
+<!-- <div class="modal fade" id="excursieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+    <form method="POST" class="post-form">
+    {% csrf_token %}
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"> Excursie </h4>
+                </div>
+
+                <div class="modal-body">
+                <table class="table table-condensed">
+                  <thead><tr>
+                      <th> Omschrijving </th>
+                      <th> Kosten </th>
+                      <th> Baten </th>
+                      <th> Tijdsduur </th>
+                  </tr></thead>
+                  <tbody><tr>
+                      <td> {{ items.omschrijving}} </td>
+                      <td class='danger'> {{ items.kosten }} </td>
+                      <td class='success'> 80{{ items.baten }} </td>
+                      <td> {{ items.tijd }} uur </td>
+                  </tr></tbody>
+                </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Sluiten</button>
+                        
+
+
+                     {% if user.userprofile.exp_soc < items.kosten_exp and user.userprofile.exp_toek < kosten_exp  or user.userprofile.bank < items.kosten %}
+                         <button type="button" class="btn btn-primary" disabled>Kopen</button>
+                     {% else %}
+                     <button type="button" class="btn btn-primary" name="{{items.id_module}}_update" id="kaas">Kopen</button>
+                     {{buy_excursie.as_p}}
+                     {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+    </form>
+
+</div> -->
+
+
+
+
+
+<!-- <div class="modal fade" id="excursieModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <form class="post-form" method="POST">
+        <div class="modal-dialog" role="document">
+
+            <div class="modal-content">
+
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>Editing Contact</h3>
+                  </div>
+
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"> Excursie </h4>
+                    </div>  
+
+                  <div class="modal-body">
+                       {% csrf_token %}
+                       {{buy_excursie.as_p}}
+                  </div>
+                  <div class="modal-footer">
+                       <input class="btn btn-primary" type="submit" value="Save" />
+                       <input name="cancel" class="btn" type="submit" value="Cancel"/>
+                  </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+<div class="modal fade" id="caseModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <form class="post-form" method="POST">
+        <div class="modal-dialog" role="document">
+
+            <div class="modal-content">
+
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>Editing Contact</h3>
+                  </div>
+
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"> Case </h4>
+                    </div>  
+
+                  <div class="modal-body">
+                       {% csrf_token %}
+                       {{buy_case.as_p}}
+                  </div>
+                  <div class="modal-footer">
+                       <input class="btn btn-primary" type="submit" value="Save" />
+                       <input name="cancel" class="btn" type="submit" value="Cancel"/>
+                  </div>
+            </div>
+        </div>
+
+    </form>
+</div> -->
+
+{% for items in modules %}
+    <div class="modal fade" id="{{items.id_module}}Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <form class="post-form" method="POST">
+            <div class="modal-dialog" role="document">
+
+                <div class="modal-content">
+
+                        <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel"> {{items.naam}} </h4>
+                        </div>  
+
+                      <div class="modal-body">
+                        Omschrijving: <br>
+                        {{items.omschrijving}}
+
+
+                        <br>
+                        <br>
+
+                            <table class="table table-condensed">
+                                <thead><tr>
+                                    <!-- <th> Omschrijving <br> <br> </th> -->
+                                    <th> Kosten  </th>
+                                    <th> Baten  (vast) </th>
+                                    {% if items.module_type == 'Actief' %}
+                                    <th> Baten  (Flexibel) </th>
+                                    {% endif %}
+                                    <th> Tijdsduur  </th>
+                                </tr></thead>
+                                <tbody><tr>
+                                    <!-- <td> {{ items.omschrijving}} </td> -->
+                                    <td class='danger'> {{ items.kosten }} </td>
+                                    <td class='success'> {{ items.baten_vast }} </td>
+                                    {% if items.module_type == 'Actief' %}
+                                    <td> (behaalde cijfer voor module) * {{items.factor}} </td>
+                                    {% endif %}
+                                    <td> {{ items.tijd }} uur </td>
+                                </tr></tbody>
+                            </table>
+
+
+                            <div style='display:none;'>
+                                {% csrf_token %}
+                                {% cycle buy_0.as_p buy_1.as_p buy_2.as_p buy_3.as_p buy_4.as_p buy_5.as_p %} 
+                            </div>
+
+                           
+                      </div>
+                      <div class="modal-footer">
+
+<!--                         {% if items.buy_module == 1 or items.status == 'Bezig' %}
+                            <div style="color:red"> Module al gekocht! </div>
+                            <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                            <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                        {% endif %} -->
+
+
+                        {% if items.status == 'Bezig' %}
+                            <div style="color:orange"> Met module bezig! </div>
+                            <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                            <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                        {% endif %}
+
+                        {% if items.status == 'Voltooid' %}
+                            <div style="color:red"> Module al voltooid! </div>
+                            <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                            <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                        {% endif %}
+
+
+                        {% if items.status == 'Niet gedaan' %}
+                            {% if items.niveau == 2 and user.bank >= items.kosten%}
+
+                                {% if items.gebied == 'studie' %}
+
+                                    {% if user.exp_stud >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_stud < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'studietoekomst' %}
+
+                                    {% if user.exp_stud >= items.exp_required or user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'toekomst' %}
+
+                                    {% if user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_toek < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'sociaaltoekomst' %}
+
+                                    {% if user.exp_soc >= items.exp_required or user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'sociaal' %}
+
+                                    {% if user.exp_studie >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_studie < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type=" submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'studiesociaal' %}
+
+                                    {% if user.exp_stud >= items.exp_required or user.exp_soc >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                            {% elif items.niveau == 1 and user.bank >= items.kosten %}
+
+                                {% if items.gebied == 'studie' %}
+
+                                    {% if user.exp_stud >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_stud < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'studietoekomst' %}
+
+                                    {% if user.exp_stud >= items.exp_required or user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'toekomst' %}
+
+                                    {% if user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_toek < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'sociaaltoekomst' %}
+
+                                    {% if user.exp_soc >= items.exp_required or user.exp_toek >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'sociaal' %}
+
+                                    {% if user.exp_soc >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% elif user.exp_soc < items.exp_required %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                                {% if items.gebied == 'studiesociaal' %}
+
+                                    {% if user.exp_stud >= items.exp_required or user.exp_soc >= items.exp_required %}
+                                        <input class="btn btn-success" type="submit" value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% else %}
+                                        <div style="color:red"> Niet genoeg experience! </div>
+                                        <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                        <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                                    {% endif %}
+
+                                {% endif %}
+
+                            {% else %}
+                                <div style="color:red"> Niet genoeg geld! </div>
+                                <input class="btn btn-success" type="submit" disabled value="Kopen" />
+                                <input name="cancel" class="btn btn-danger" type="submit" value="Sluiten"/>
+                            {% endif %}
+                        {% endif %}
+
+                      </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
 {% endfor %}

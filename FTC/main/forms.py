@@ -5,7 +5,7 @@ from .models import UserProfile, Questions, Modules
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('firstname', 'lastname', 'questions',)
+        fields = ('firstname', 'lastname',  'weging_stud', 'weging_toek', 'weging_soc') #'questions'
 
 
 class QuestionForm(forms.ModelForm):
@@ -14,6 +14,12 @@ class QuestionForm(forms.ModelForm):
         fields = '__all__'
 
 class ModuleForm(forms.ModelForm):
+	save_module = forms.IntegerField(initial=0)
+	class Meta:
+		model = Modules
+		fields = ('cijfer',)
+
+class BuyModuleForm(forms.ModelForm):
     class Meta:
         model = Modules
-        fields = '__all__'
+        fields = ('buy_module',)

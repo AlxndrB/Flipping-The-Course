@@ -1,57 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-class Modules(models.Model):
-        AREAS = (
-                ('studie', 'studie'),
-                ('sociaal', 'sociaal'),
-                ('toekomst', 'toekomst'),
-                ('studiesociaal', 'studiesociaal'),
-                ('studietoekomst', 'studietoekomst'),
-                ('sociaaltoekomst', 'sociaaltoekomst')
-        )
-
-        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
-        naam = models.CharField(max_length=50)
-        omschrijving = models.TextField()
-        tijd =  models.IntegerField('Tijdsduur', default=0)
-        kosten = models.IntegerField('Kosten', default=0)
-        baten_vast = models.IntegerField('Vaste baten', default=0)
-        baten_flex = models.IntegerField('Flexibele baten', default=0)
-        experience_vast = models.IntegerField('Vaste exp', default=0)
-        experience_flex = models.IntegerField('Flexibele exp', default=0)
-        factor = models.DecimalField(max_digits=3, decimal_places=1, default=0)
-        niveau = models.IntegerField('Niveau van course', default=1)
-
-        def __str__(self):
-                return self.naam
-
-
-class Questions(models.Model):
-        CHOICES = (
-                ('Ja', 'Ja'),
-                ('Nee', 'Nee'),
-                ('WN', 'Weet niet')
-        )
-
-        AREAS = (
-                ('studie', 'studie'),
-                ('sociaal', 'sociaal'),
-                ('toekomst', 'toekomst'),
-                ('studiesociaal', 'studiesociaal'),
-                ('studietoekomst', 'studietoekomst'),
-                ('sociaaltoekomst', 'sociaaltoekomst')
-        )
-
-        question = models.TextField()
-        answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
-        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
-        timestamp = models.DateTimeField(auto_now=True)
-
-        def __str__(self):
-                return self.question
-
+from django.core.validators import MaxValueValidator
 
 class UserProfile(models.Model):
         user = models.OneToOneField(User)
@@ -73,13 +22,86 @@ class UserProfile(models.Model):
         niveau = models.IntegerField('Niveau', default=1)
 
         # Weging voor piechart enzo
-        weging_stud = models.IntegerField('Weging studie', default=100)
-        weging_soc = models.IntegerField('Weging sociaal', default=100)
-        weging_toek = models.IntegerField('Weging toekomst', default=100)
+        weging_stud = models.IntegerField('Weging studie', default=100, blank=True)
+        weging_soc = models.IntegerField('Weging sociaal', default=100, blank=True)
+        weging_toek = models.IntegerField('Weging toekomst', default=100, blank=True)
 
         # relations bitches
-        modules = models.ManyToManyField(Modules, blank=True)
-        questions = models.ManyToManyField(Questions)
+        # modules = models.ForeignKey(Modules, on_delete=models.CASCADE, blank=True, null=True)
+        # questions = models.ForeignKey(Questions, on_delete=models.CASCADE, blank=True, null=True)
+        # modules = models.ToManyField(Modules, on_delete=models.CASCADE, blank=True, null=True)
 
         def __str__(self):
                 return self.user.username
+
+class Modules(models.Model):
+        AREAS = (
+                ('studie', 'studie'),
+                ('sociaal', 'sociaal'),
+                ('toekomst', 'toekomst'),
+                ('studiesociaal', 'studiesociaal'),
+                ('studietoekomst', 'studietoekomst'),
+                ('sociaaltoekomst', 'sociaaltoekomst')
+        )
+
+        TYPES_MODULES = (
+                ('Actief', 'Actief'),
+                ('Passief', 'Passief')
+        )
+
+        STATUS_MODULES = (
+                ('Niet gedaan', 'Niet gedaan'),
+                ('Bezig', 'Bezig'),
+                ('Voltooid', 'Voltooid')
+        )
+
+        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
+        naam = models.CharField(max_length=50, default="NAAM")
+        naam_gebruiker = models.CharField(max_length=50 , default = "NAAM_GEBRUIKER")
+        omschrijving = models.TextField(default="OMSCHRIJVING")
+        tijd =  models.IntegerField('Tijdsduur', default=0)
+        kosten = models.IntegerField('Kosten', default=0)
+        baten_vast = models.IntegerField('Vaste baten', default=0)
+        baten_flex = models.IntegerField('Flexibele baten', default=0)
+        experience_vast = models.IntegerField('Vaste exp', default=0)
+        experience_flex = models.IntegerField('Flexibele exp', default=0)
+        factor = models.PositiveIntegerField('Factor module', default=0)
+        niveau = models.IntegerField('Niveau van course', default=1)
+        module_type = models.CharField(max_length=10, choices=TYPES_MODULES, default='Passief')
+        cijfer = models.PositiveIntegerField('Cijfer', default=0 , validators=[MaxValueValidator(10),])
+        status = models.CharField(max_length=15, choices=STATUS_MODULES, default='Niet gedaan' )
+        id_module = models.CharField(max_length=15, default='' )
+        buy_module = models.PositiveIntegerField('Module kopen', default=0)									#0 = false, 1 = true, i.e. module kopen!
+        userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
+        exp_required = models.IntegerField('Experience benodigd', default=0)
+
+        def __str__(self):
+                return self.naam_gebruiker
+
+
+class Questions(models.Model):
+        CHOICES = (
+                ('Ja', 'Ja'),
+                ('Nee', 'Nee'),
+                ('WN', 'Weet niet')
+        )
+
+        AREAS = (
+                ('studie', 'studie'),
+                ('sociaal', 'sociaal'),
+                ('toekomst', 'toekomst'),
+                ('studiesociaal', 'studiesociaal'),
+                ('studietoekomst', 'studietoekomst'),
+                ('sociaaltoekomst', 'sociaaltoekomst')
+        )
+
+        question = models.TextField(default="QUESTION")
+        answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
+        gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
+        timestamp = models.DateTimeField(auto_now=True)
+
+        def __str__(self):
+                return self.question
+
+
+

@@ -7,21 +7,114 @@
 <h6> <a href="logout/">logout</a>  </h6>
 </header>  
 <header id="header">
-<h6> {{firstname}} </h6> <br>
+<h6> {{firstname}} {{lastname}} </h6> <br>
 </header>
  
+<style>
+
+.button_red {
+    color: red;
+}
+.button_green {
+    color: green;
+}
+
+</style>
+
 {% endblock %}
 
 {% block body %}
 
+<!-- data_request : {{data_request}} <br>
+to_save : {{to_save}} <br>
+data_user : {{data_user}} <br>
+bank : {{bank}} <br>
+kosten_bezig_totaal : {{kosten_bezig_totaal}} <br>
+modules_user_bezig : {{modules_user_bezig}} <br> -->
+<!-- form_buy_module_list : {{form_buy_module_list}} <br> -->
 
 <div class="col-md-6">
 <div class="panel panel-default">
 	<div class="panel-heading">
     	<h3 class="panel-title">Modules</h3>
   	</div>
-  	<div class="panel-body col-md-offset-1">
-    	{% include "main/Piechart.html" %}
+  	<div class="panel-body col-md-offset-1 img-responsive">
+
+  		{% load staticfiles%} 
+
+		<div class="container">
+		    <div class="row">
+		        <div class="col-md-6">
+		            <div class="panel-body">
+						<div id="img_container">
+
+						    <!-- <img src="{% static test %}{{graphic}}.png" class="img-responsive" >  -->
+							<img src="/static/main/user_piecharts/{{user}}.png" class="img-responsive" > 
+
+		                    <!--  Solve responsive buttong with immage!!!-->
+		    <div class="container">
+    <button class="button_1" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; width:20%"> 
+    	Opendag 
+    </button>
+    
+    <button class="button_1" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
+    	Webklas 
+    </button>
+
+    <button class="button_1" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; width:24%"> 
+    	Dag student 
+    </button>
+
+	<button class="button_3" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
+		Excursie 
+    </button>
+
+    <button class="button_5" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
+    	Case 
+    </button>
+
+	<button class="button_6" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
+		Borrel 
+	</button>
+
+
+<!-- 		        	<a data-toggle="modal" href="#dag_studentModal"> 
+		        		<button class="button_3" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%"> 
+		        			Dag student 
+		        		</button>
+	        		</a>
+	        				        <button class="button_2" data-toggle="modal" data-target="#studietoekomstModal"> stud/toek </button>
+		        
+		        	<a data-toggle="modal" href="#excursieModal"> 
+		        		<button class="button_3" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
+		        			Excursie 
+		        		</button>
+	        		</a>
+	        				        <button class="button_4" data-toggle="modal" data-target="#studieModal"> stud </button>
+
+		        	<a data-toggle="modal" href="#caseModal"> 
+		        		<button class="button_3" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
+		        			Case 
+		        		</button>
+	        		</a>
+	        				        	<a data-toggle="modal" href="#borrelModal"> 
+		        		<button class="button_3" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
+		        			Borrel 
+		        		</button>
+	        		</a> -->
+
+
+		    </div>
+
+
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+
+		{% include "main/Piechart.html" %}
+
 	</div>
 </div>
 </div>
@@ -46,8 +139,10 @@
     		<h3 class="panel-title">Bank</h3>
   		</div>
 		<div class="panel-body">
-		{% include "main/bank.html" %}
-	  	</div>
+
+			{% include "main/bank.html" %} 
+	  	
+	  	 </div>
 	</div>
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -60,4 +155,6 @@
 	</div>
 </div> 
 </div>
+
+
 {% endblock %}	

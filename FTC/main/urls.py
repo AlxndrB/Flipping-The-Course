@@ -22,6 +22,9 @@ urlpatterns = [
     url(r'^login', views.login),
     url(r'^logout', views.logout),
     url(r'^loggedin', views.loggedin),
-    url(r'^vragen', views.vragen),
-    url(r'^temp', views.temp)
+    # url(r'^vragen', views.vragen),
+    # url(r'^temp', views.temp),
+    url(r'^weging', views.weging),
+    url(r'^docent', views.docent),
+    # url(r'^test', views.test)
 ]
