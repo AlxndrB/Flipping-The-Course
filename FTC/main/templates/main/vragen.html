@@ -3,13 +3,16 @@
 {% block head %}
   Waar Sta Je Nu?
 
-<header id="header">
-<h6> <a href="logout/">logout</a>  </h6>
-</header>  
-<header id="header">
-<h6> {{firstname}} </h6> <br>
-</header>
- 
+<div class="dropdown" style="float: right;     padding-right: 5%;">
+  <button class="dropbtn"> <font size="3"> {{firstname}} {{lastname}}</font> </button>
+  <div class="dropdown-content">
+    <a href="loggedin">  <font size="2">Home</font> </a>
+    <a href="vragen">  <font size="2">Wijzig focus</font> </a>
+    <a href="#"> <font size="2"> Export PDF </font> </a>
+    <a href="logout"/> <font size="2"> Logout </font> </a>
+  </div>
+</div>
+
 <script type="text/javascript">
   $(document).ready(function(){
  

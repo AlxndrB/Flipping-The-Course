@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
 {% block head %}
-  Module Scherm  
+  Module Scherm 
 
-<header id="header">
-<h6> <a href="logout/">logout</a>  </h6>
-</header>  
-<header id="header">
-<h6> {{firstname}} {{lastname}} </h6> <br>
-</header>
+<div class="dropdown" style="float: right;     padding-right: 5%;">
+  <button class="dropbtn"> <font size="3"> {{firstname}} {{lastname}}</font> </button>
+  <div class="dropdown-content">
+  	<a href="main/loggedin">  <font size="2">Home</font> </a>
+    <a href="vragen">  <font size="2">Wijzig focus</font> </a>
+    <a href="pdf_export"> <font size="2"> Export PDF </font> </a>
+    <a href="logout"/> <font size="2"> Logout </font> </a>
+  </div>
+</div>
  
 <style>
 
@@ -18,8 +21,31 @@
 .button_green {
     color: green;
 }
+#outer {
+	position:relative;
+/*    border: 4px solid blue;
+*/    text-align: center;
+    width:auto;
+    height:auto;
+    display:inline-block;
+    max-height:100%;
+}
 
 </style>
+
+<script>
+$( document ).ready(function() {
+    var heights = $(".well").map(function() {
+        return $(this).height();
+    }).get(),
+
+    maxHeight = Math.max.apply(null, heights);
+
+    $(".well").height(maxHeight);
+});
+
+
+</script>
 
 {% endblock %}
 
@@ -33,128 +59,113 @@ kosten_bezig_totaal : {{kosten_bezig_totaal}} <br>
 modules_user_bezig : {{modules_user_bezig}} <br> -->
 <!-- form_buy_module_list : {{form_buy_module_list}} <br> -->
 
+<!-- weging_toek_norm : {{weging_toek_norm}} <br>
+weging_soc_norm : {{weging_soc_norm}} <br>
+weging_stud_norm : {{weging_stud_norm}} <br>
+weging_stud : {{weging_stud}} <br>
+weging_tot : {{weging_tot}} -->
+
+
 <div class="col-md-6">
 <div class="panel panel-default">
 	<div class="panel-heading">
     	<h3 class="panel-title">Modules</h3>
   	</div>
-  	<div class="panel-body col-md-offset-1 img-responsive">
+  	
+  	<div class="panel-body img-responsive well" style="text-align: center;">
+
+
+		<div id="outer">
 
   		{% load staticfiles%} 
 
-		<div class="container">
-		    <div class="row">
-		        <div class="col-md-6">
-		            <div class="panel-body">
-						<div id="img_container">
+							<img src="/static/main/user_piecharts/{{user}}.png?cachebuster={{uuid}" class="img-responsive" style="display:inline-block; width:auto; height:auto; max-width:100%; max-height:100%;"> 
 
-						    <!-- <img src="{% static test %}{{graphic}}.png" class="img-responsive" >  -->
-							<img src="/static/main/user_piecharts/{{user}}.png" class="img-responsive" > 
-
-		                    <!--  Solve responsive buttong with immage!!!-->
-		    <div class="container">
-    <button class="button_1" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; width:20%"> 
-    	Opendag 
+    <button class="star_five" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
+    	<span> </span>
+    	<!-- opendag -->
     </button>
     
-    <button class="button_1" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
-    	Webklas 
+    <button class="button_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
+    	<!-- Webklas  -->
     </button>
 
-    <button class="button_1" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; width:24%"> 
-    	Dag student 
+    <button class="button_3" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; "> 
+    	<!-- Dag student  -->
     </button>
 
-	<button class="button_3" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
-		Excursie 
+	<button class="button_4" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
+		<!-- Excursie  -->
     </button>
 
-    <button class="button_5" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
+    <button class="button_1" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
     	Case 
     </button>
 
-	<button class="button_6" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
+	<button class="button_1" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
 		Borrel 
 	</button>
 
-
-<!-- 		        	<a data-toggle="modal" href="#dag_studentModal"> 
-		        		<button class="button_3" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%"> 
-		        			Dag student 
-		        		</button>
-	        		</a>
-	        				        <button class="button_2" data-toggle="modal" data-target="#studietoekomstModal"> stud/toek </button>
-		        
-		        	<a data-toggle="modal" href="#excursieModal"> 
-		        		<button class="button_3" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
-		        			Excursie 
-		        		</button>
-	        		</a>
-	        				        <button class="button_4" data-toggle="modal" data-target="#studieModal"> stud </button>
-
-		        	<a data-toggle="modal" href="#caseModal"> 
-		        		<button class="button_3" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
-		        			Case 
-		        		</button>
-	        		</a>
-	        				        	<a data-toggle="modal" href="#borrelModal"> 
-		        		<button class="button_3" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
-		        			Borrel 
-		        		</button>
-	        		</a> -->
-
-
-		    </div>
-
-
-						</div>
-		            </div>
-		        </div>
-		    </div>
 		</div>
 
+
+
+		
 		{% include "main/Piechart.html" %}
+
+		<!-- </div> -->
+
+		
 
 	</div>
 </div>
 </div>
 
-<div class="col-md-6">
-<div class="panel panel-default">
+<div class="col-md-6 ">
+<div class="panel panel-default ">
 	<div class="panel-heading">
     	<h3 class="panel-title">Voortgang</h3>
   	</div>
-  	<div class="panel-body">
-    	<div class="panel panel-default">
-		<div class="panel-heading">
-    		<h3 class="panel-title">Experience</h3>
-  		</div>
-		<div class="panel-body">
-	    	{% include "main/experience.html" %}
-	  	</div>
-	</div>
+  	<div class="panel-body well">
 
-	<div class="panel panel-default">
-		<div class="panel-heading">
-    		<h3 class="panel-title">Bank</h3>
-  		</div>
-		<div class="panel-body">
+		<!-- <div class="well" style="background:none; border:none" id="item2"> -->
 
-			{% include "main/bank.html" %} 
-	  	
-	  	 </div>
-	</div>
-	<div class="panel panel-default">
-		<div class="panel-heading">
-    		<h3 class="panel-title">Agenda</h3>
-  		</div>
-		<div class="panel-body">
-		Basic panel example
-	  	</div>
-	</div>
+	    	<div class="panel panel-default">
+				<div class="panel-heading">
+		    		<h3 class="panel-title">Experience</h3>
+		  		</div>
+				<div class="panel-body">
+			    	{% include "main/experience.html" %}
+			  	</div>
+			</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+		    		<h3 class="panel-title">Bank</h3>
+		  		</div>
+				<div class="panel-body">
+
+					{% include "main/bank.html" %} 
+			  	
+			  	 </div>
+			</div>
+		
+			<div class="panel panel-default">
+				<div class="panel-heading">
+		    		<h3 class="panel-title">Agenda</h3>
+		  		</div>
+				<div class="panel-body">
+				Basic panel example
+			  	</div>
+			</div>
+
+		<!-- </div> -->
 	</div>
 </div> 
 </div>
+
+
+
 
 
 {% endblock %}	

@@ -26,6 +26,9 @@ class UserProfile(models.Model):
         weging_soc = models.IntegerField('Weging sociaal', default=100, blank=True)
         weging_toek = models.IntegerField('Weging toekomst', default=100, blank=True)
 
+        is_student = models.BooleanField(default=True)
+        is_teacher = models.BooleanField(default=False)
+
         # relations bitches
         # modules = models.ForeignKey(Modules, on_delete=models.CASCADE, blank=True, null=True)
         # questions = models.ForeignKey(Questions, on_delete=models.CASCADE, blank=True, null=True)
@@ -71,9 +74,10 @@ class Modules(models.Model):
         cijfer = models.PositiveIntegerField('Cijfer', default=0 , validators=[MaxValueValidator(10),])
         status = models.CharField(max_length=15, choices=STATUS_MODULES, default='Niet gedaan' )
         id_module = models.CharField(max_length=15, default='' )
-        buy_module = models.PositiveIntegerField('Module kopen', default=0)									#0 = false, 1 = true, i.e. module kopen!
-        userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
+        buy_module = models.PositiveIntegerField('Module kopen', default=0)
         exp_required = models.IntegerField('Experience benodigd', default=0)
+
+        userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
 
         def __str__(self):
                 return self.naam_gebruiker
@@ -95,13 +99,16 @@ class Questions(models.Model):
                 ('sociaaltoekomst', 'sociaaltoekomst')
         )
 
+        naam_question_gebruiker = models.CharField(max_length=50 , default = "NAAM_QUESTION_GEBRUIKER")
         question = models.TextField(default="QUESTION")
         answers = models.CharField(max_length=50, choices=CHOICES, default='WN')
         gebied = models.CharField(max_length=50, choices=AREAS, default='studie')
         timestamp = models.DateTimeField(auto_now=True)
 
+        userprofile = models.ForeignKey(UserProfile, on_delete=models.CASCADE, blank=True, null=True)
+
         def __str__(self):
-                return self.question
+                return self.naam_question_gebruiker
 
 
 

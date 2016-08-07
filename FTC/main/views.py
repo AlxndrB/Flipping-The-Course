@@ -1,17 +1,24 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import auth
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib import pylab
+import matplotlib.pyplot as plt
 from .models import Modules, Questions, UserProfile
 import numpy as np
-from .forms import UserProfileForm, QuestionForm, ModuleForm, BuyModuleForm
+from .forms import UserProfileForm, QuestionForm, ModuleForm, BuyModuleForm, ExportPDFForm
+from reportlab.pdfgen import canvas
+from django.template.loader import get_template
 
+from weasyprint import HTML, CSS
+from django.template import RequestContext
+from django.conf import settings
 
 def MakePieChart(request):
         # make a square figure and axes
-        pylab.figure(1, figsize=(6, 6))
+        fig, ax = plt.subplots(1, figsize=(9,9))
+
+        # pylab.figure(1, figsize=(6, 6))
         username = request.user.username
 
         # The slices will be ordered and plotted counter-clockwise.
@@ -19,23 +26,42 @@ def MakePieChart(request):
 
         #Normalizeren van user wegingen
         weging_tot = Gebruiker.weging_stud + Gebruiker.weging_toek + Gebruiker.weging_soc
-        weging_stud_norm = Gebruiker.weging_stud/weging_tot #* 100
-        weging_toek_norm = Gebruiker.weging_toek/weging_tot #* 100
-        weging_soc_norm = Gebruiker.weging_soc/weging_tot #* 100
+        weging_stud_norm = Gebruiker.weging_stud/float(weging_tot) #* 100
+        weging_toek_norm = Gebruiker.weging_toek/float(weging_tot) #* 100
+        weging_soc_norm = Gebruiker.weging_soc/float(weging_tot) #* 100
 
-        labels = 'Studie', 'Werk', 'Studentenleven'
+        labels = ['Studie', 'Werk', 'Studentenleven']
         fracs = [weging_stud_norm, weging_toek_norm, weging_soc_norm]
         # fracs = [Gebruiker.weging_stud, Gebruiker.weging_toek, Gebruiker.weging_soc]
         colors = ['gold', 'lightskyblue', 'lightcoral']
 
-        pylab.pie(fracs,
+        ax.pie(fracs,
                   labels=labels,
                   colors=colors,
                   shadow=False,
                   startangle=90)
+        # ax.axis('equal')
+        # fig.tight_layout()
 
-        pylab.savefig('./main/static/main/user_piecharts/' + username + '.png')
-        pylab.close()
+        
+
+        plt.draw()
+        plt.savefig('./main/static/main/user_piecharts/' + username + '.png', bbox_inches='tight')
+        plt.close()
+
+        # labels = 'Studie', 'Werk', 'Studentenleven'
+        # fracs = [weging_stud_norm, weging_toek_norm, weging_soc_norm]
+        # # fracs = [Gebruiker.weging_stud, Gebruiker.weging_toek, Gebruiker.weging_soc]
+        # colors = ['gold', 'lightskyblue', 'lightcoral']
+
+        # pylab.pie(fracs,
+        #           labels=labels,
+        #           colors=colors,
+        #           shadow=False,
+        #           startangle=90)
+        # pylab.tight_layout()
+        # pylab.savefig('./main/static/main/user_piecharts/' + username + '.png')
+        # pylab.close()
         string = 'main/user_piecharts/' + username + '.png'
 
         return string
@@ -50,8 +76,13 @@ def login(request):
                         user = auth.authenticate(username=username,
                                                  password=password)
                         if user is not None:
+                            if user.userprofile.is_student:
                                 auth.login(request, user)
                                 return HttpResponseRedirect('/loggedin')
+                            if user.userprofile.is_teacher:
+                                auth.login(request, user)
+                                return HttpResponseRedirect('/docent')
+
                         else:
                                 error = 'invalide username or password!'
                                 form = 'registration/login.html'
@@ -157,7 +188,7 @@ def loggedin(request):
 
                 bank_new = data_user.bank
                 # Determine the position of the buttons
-                x_origin = 300-10
+                x_origin = 300-50
                 y_origin = 300-15
                 r = 180
                 rad_per = 2*np.pi / 100             # 2 pi / 100 %
@@ -166,9 +197,9 @@ def loggedin(request):
 
                 #Normalizeren van user wegingen
                 weging_tot = Gebruiker.weging_stud + Gebruiker.weging_toek + Gebruiker.weging_soc
-                weging_stud_norm = Gebruiker.weging_stud/weging_tot * 100
-                weging_toek_norm = Gebruiker.weging_toek/weging_tot * 100
-                weging_soc_norm = Gebruiker.weging_soc/weging_tot * 100
+                weging_stud_norm = Gebruiker.weging_stud/float(weging_tot) * 100
+                weging_toek_norm = Gebruiker.weging_toek/float(weging_tot) * 100
+                weging_soc_norm = Gebruiker.weging_soc/float(weging_tot) * 100
 
                 # Button studie toekomst
                 theta_stud_toek = start + weging_stud_norm * rad_per
@@ -221,6 +252,12 @@ def loggedin(request):
                 bank = request.user.userprofile.bank
                 # graphic = MakePieChart(request)
 
+                #Normalizing expeience
+                exp_user_stud_norm = Gebruiker.exp_stud / 1000.0 * 100
+                exp_user_soc_norm = Gebruiker.exp_soc / 1000.0 * 100
+                exp_user_toek_norm = Gebruiker.exp_toek / 1000.0 * 100
+                exp_user_totaal_norm = exp_user_stud_norm + exp_user_soc_norm + exp_user_toek_norm
+
                 modules_user = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
                 modules = modules_user.modules_set.all()
                 user = Gebruiker
@@ -236,6 +273,8 @@ def loggedin(request):
                             'x_stud2': x_stud2, 'y_stud2': y_stud2,
                             'x_toek': x_toek, 'y_toek': y_toek, 'x_soc': x_soc, 'y_soc': y_soc,
                             'weging_stud_norm':weging_stud_norm, 'weging_toek_norm':weging_toek_norm, 'weging_soc_norm':weging_soc_norm,
+                            'weging_stud':Gebruiker.weging_stud,
+                            'weging_tot':weging_tot,
                             'modules': modules,
                             'data_request':data_request,
                             'data_user':data_user,
@@ -245,6 +284,8 @@ def loggedin(request):
                             'baten_flex_voltooid':baten_flex_voltooid,
                             'modules_user_bezig':modules_user_bezig,
                             'kosten_totaal': kosten_totaal, 'baten_totaal':baten_totaal,
+                            'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+                            'exp_user_totaal_norm':exp_user_totaal_norm,
                 }
                 for i in range(len(form_buy_module_list)):
                 	response['buy_'+str(i)] = form_buy_module_list[i]
@@ -301,6 +342,7 @@ previous_username = []
 def docent(request):
     form = "main/docent.html"
     form_userprofile = UserProfileForm()
+    teacher = request.user.userprofile
 
     if request.method == "POST":
         firstname = request.POST.get('firstname', "")
@@ -392,9 +434,7 @@ def docent(request):
 		            #determine which modules needs to be saved
 		            to_save = 0
 		            user_modules_cijfer = [] #cijfer van de user voor elke module
-		            kaas = []
 		            for i in data_request:
-		            	kaas.append(i)
 		            	for p in range(len(modules_user_pending)):
 		            		if i == modules_user_pending[p].id_module:
 		            			to_save = modules_user_pending[p].id_module
@@ -413,20 +453,20 @@ def docent(request):
 		            			module_temp.status = 'Voltooid'
 		            			module_temp.save()
 		            			if module_temp.gebied == 'studie':
-		            				username.exp_stud += module_temp.experience_vast
+		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
 		            			if module_temp.gebied == 'studietoekomst':
-		            				username.exp_stud += module_temp.experience_vast
-		            				username.exp_toek += module_temp.experience_vast
+		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+		            				username.exp_toek += module_temp.experience_vast+ int(module_temp.cijfer) * int(module_temp.factor)
 		            			if module_temp.gebied == 'toekomst':
-		            				username.exp_toek += module_temp.experience_vast
+		            				username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
 		            			if module_temp.gebied == 'sociaaltoekomst':
-		            				username.exp_toek += module_temp.experience_vast
-		            				username.exp_soc += module_temp.experience_vast
+		            				username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
 		            			if module_temp.gebied == 'sociaal':
-		            				username.exp_soc += module_temp.experience_vast
+		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
 		            			if module_temp.gebied == 'studiesociaal':
-		            				username.exp_soc += module_temp.experience_vast
-		            				username.exp_stud += module_temp.experience_vast
+		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
 		            			username.bank += int(int(module_temp.cijfer) * module_temp.factor + int(module_temp.baten_vast))
 		            			username.save()
 		            		if module_temp.module_type == 'Passief':
@@ -449,7 +489,8 @@ def docent(request):
 		            				username.exp_soc += module_temp.experience_vast
 		            				username.exp_stud += module_temp.experience_vast
 		            			username.bank += module_temp.baten_vast
-		            			username.save()
+                                username.exp_tot = username.exp_stud + username.exp_soc + username.exp_toek
+                                username.save()
 
 		            #Update status list
 		            modules_user_pending = []
@@ -482,6 +523,7 @@ def docent(request):
 		                'form_modules_actief':form_modules_actief,
 		                'form_modules_cijfer_clean':form_modules_cijfer_clean,
 		                'username':username,
+                        'teacher':teacher,
 		            }
 		            for i in range(len(form_modules_actief)) :
 		                response['form_modules_actief'+str(i)] = form_modules_actief[i]
@@ -494,13 +536,119 @@ def docent(request):
             message_not_found = "Voer een valide naam in!"
             error = "True"
             response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
-            			'error':error,
+            			'error':error,'teacher':teacher,
             }
 
             return render(request, form, response)
 
     else:
-        response = {'form_userprofile':form_userprofile,
+        response = {'form_userprofile':form_userprofile,'teacher':teacher,
         }
 
         return render(request, form, response)
+
+def vragen(request):
+        Gebruiker = request.user.userprofile
+        firstname = Gebruiker.firstname
+        lastname = Gebruiker.lastname
+        form = 'main/vragen.html'
+        import time
+        localtime = time.localtime(time.time())
+        year = localtime[0]
+        month = localtime[1]
+        day = localtime[2]
+        hour = localtime[3]+2
+        minute = localtime[4] 
+        second = localtime[5]
+
+
+        question_form = []
+        for i in range(12):
+                question_form.append(QuestionForm(prefix=str(i), auto_id='id_%s'))
+
+        if request.method == "POST":
+                A = Gebruiker
+                Aquest = A.questions_set.all()
+                for i in range(12):
+                        question_data = QuestionForm(request.POST, prefix=str(i))
+                        temp = Questions.objects.create(
+                                question =  question_data['question'].value(),
+                                answers =  question_data['answers'].value(),
+                                gebied =  question_data['gebied'].value(),
+                                userprofile = A,
+                                naam_question_gebruiker = str(A)+'_q'+str(i)+'_'+str(year)+'-'+str(month)+'-'+str(day)+'_'+str(hour)+':'+str(minute)+':'+str(second),
+                                )
+                        temp.save()
+                        A.questions_set.add(temp)
+                return HttpResponseRedirect('/weging')
+
+        stud_lijst = Gebruiker.questions_set.all().filter(gebied="studie")
+        stud_lijst = stud_lijst.order_by('-timestamp')[:4]
+        toek_lijst = Gebruiker.questions_set.all().filter(gebied="toekomst")
+        toek_lijst = toek_lijst.order_by('-timestamp')[:4]
+        soc_lijst = Gebruiker.questions_set.all().filter(gebied="sociaal")
+        soc_lijst = soc_lijst.order_by('-timestamp')[:4]
+
+        response = {'stud_lijst': stud_lijst,
+                    'toek_lijst': toek_lijst,
+                    'soc_lijst': soc_lijst,
+                    'firstname': firstname,
+                    'lastname': lastname,
+                    'localtime':localtime,
+                    }
+        i = 0
+        for items in question_form:
+                response['qform' + str(i)] = items
+                i += 1
+
+        return render(request, form, response)
+
+def pdf_export(request):
+    Gebruiker = request.user.userprofile
+    firstname = Gebruiker.firstname
+    lastname = Gebruiker.lastname
+    form = 'main/pdf_export.html'
+    user = Gebruiker
+
+    modules_user = user.modules_set.all()
+
+    temp = ExportPDFForm()
+
+    exp_user_stud_norm = Gebruiker.exp_stud / 1000.0 * 100
+    exp_user_soc_norm = Gebruiker.exp_soc / 1000.0 * 100
+    exp_user_toek_norm = Gebruiker.exp_toek / 1000.0 * 100
+    exp_user_totaal_norm = exp_user_stud_norm + exp_user_soc_norm + exp_user_toek_norm
+    success = 'success'
+    pdf_export_selector = 'True'
+
+    data_request = 0 
+    if request.method == "POST":
+        temp = ExportPDFForm(request.POST)
+        data_request = request.POST
+
+        html_template = get_template('main/pdf_export_frame.html')
+        # rendered_html = html_template.render(RequestContext(request, {'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
+        #         'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+        #         'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
+        #             })).encode(encoding="UTF-8")
+        rendered_html = html_template.render({'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
+                'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+                'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
+                'exp_stud':Gebruiker.exp_stud, 'exp_toek':Gebruiker.exp_toek, 'exp_soc':Gebruiker.exp_soc, 'exp_tot':Gebruiker.exp_tot,
+                    }).encode(encoding="UTF-8")
+
+        pdf_file = HTML(string=rendered_html,base_url=request.build_absolute_uri()).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
+        # pdf_file = HTML(string=rendered_html).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
+
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="export_template.pdf"'
+
+        return response
+
+    response = {'firstname':firstname, 'lastname':lastname, 'data_request':data_request, 'form_pdf_export':temp,
+                'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+                'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'success':success,
+    }
+
+    return render(request, form, response)
+    

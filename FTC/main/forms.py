@@ -23,3 +23,6 @@ class BuyModuleForm(forms.ModelForm):
     class Meta:
         model = Modules
         fields = ('buy_module',)
+
+class ExportPDFForm(forms.Form):
+	export_pdf = forms.IntegerField(initial=0)
