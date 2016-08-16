@@ -30,20 +30,18 @@ def MakePieChart(request):
         weging_toek_norm = Gebruiker.weging_toek/float(weging_tot) #* 100
         weging_soc_norm = Gebruiker.weging_soc/float(weging_tot) #* 100
 
-        labels = ['Studie', 'Werk', 'Studentenleven']
+        # labels = ['Studie', 'Werk', 'Studentenleven']
         fracs = [weging_stud_norm, weging_toek_norm, weging_soc_norm]
         # fracs = [Gebruiker.weging_stud, Gebruiker.weging_toek, Gebruiker.weging_soc]
-        colors = ['gold', 'lightskyblue', 'lightcoral']
+        colors = ['#eea236', '#4dbadb', '#d44844']
 
         ax.pie(fracs,
-                  labels=labels,
+                  # labels=labels,
                   colors=colors,
                   shadow=False,
                   startangle=90)
         # ax.axis('equal')
         # fig.tight_layout()
-
-        
 
         plt.draw()
         plt.savefig('./main/static/main/user_piecharts/' + username + '.png', bbox_inches='tight')
@@ -188,12 +186,13 @@ def loggedin(request):
 
                 bank_new = data_user.bank
                 # Determine the position of the buttons
-                x_origin = 300-50
-                y_origin = 300-15
-                r = 180
+                x_origin = 50.0-2.5
+                y_origin = 50.0-2.5
+                r = 35
                 rad_per = 2*np.pi / 100             # 2 pi / 100 %
                 start = .5 * np.pi
                 reduce_r = 0.65
+                image_size = 100.0
 
                 #Normalizeren van user wegingen
                 weging_tot = Gebruiker.weging_stud + Gebruiker.weging_toek + Gebruiker.weging_soc
@@ -203,48 +202,65 @@ def loggedin(request):
 
                 # Button studie toekomst
                 theta_stud_toek = start + weging_stud_norm * rad_per
-                x_stud_toek = int(r * np.cos(theta_stud_toek) + x_origin) / 600.0 * 100.0
-                y_stud_toek = int(-1 * r * np.sin(theta_stud_toek) + y_origin) / 600.0 * 100.0
+                x_stud_toek = int(r * np.cos(theta_stud_toek) + x_origin) / image_size * 100.0 
+                y_stud_toek = int(-1 * r * np.sin(theta_stud_toek) + y_origin) / image_size * 100.0 
 
                 # Button toekomst student
                 theta_toek_soc = start + (weging_toek_norm + weging_stud_norm) * rad_per
-                x_toek_soc = int(r * np.cos(theta_toek_soc) + x_origin)/ 600.0 * 100.0
-                y_toek_soc = int(-1 * r * np.sin(theta_toek_soc) + y_origin) / 600.0 * 100.0
+                x_toek_soc = int(r * np.cos(theta_toek_soc) + x_origin)/ image_size * 100.0 
+                y_toek_soc = int(-1 * r * np.sin(theta_toek_soc) + y_origin) / image_size * 100.0 
 
                 # Button student studie
                 theta_soc_stud = start
-                x_soc_stud = int(r * np.cos(theta_soc_stud) + x_origin) / 600.0 * 100.0 - 12
-                y_soc_stud = int( -1* r * np.sin(theta_soc_stud) +  y_origin) / 600.0 * 100.0
+                x_soc_stud = int(r * np.cos(theta_soc_stud) + x_origin) / image_size * 100.0 
+                y_soc_stud = int( -1* r * np.sin(theta_soc_stud) +  y_origin) / image_size * 100.0 
 
-                # # Button studie
-                # theta_stud = start + (weging_stud_norm * rad_per * 0.5)
-                # x_stud = int(reduce_r * r * np.cos(theta_stud) + x_origin)
-                # y_stud = int(reduce_r * -1 * r * np.sin(theta_stud) + y_origin)
+                if weging_stud_norm < 10.0 and weging_stud_norm > 7.0:
+                    reduce_r_stud = 0.6
+                    # Button studie 1
+                    theta_stud1 = start + (weging_stud_norm * rad_per * 0.5)
+                    x_stud1 = int(reduce_r_stud * reduce_r * r * np.cos(theta_stud1) + x_origin) / image_size * 100 
+                    y_stud1 = int(reduce_r_stud * reduce_r * -1 * r * np.sin(theta_stud1) + y_origin) / image_size * 100 
 
-                # Button studie 1
-                theta_stud1 = start + (weging_stud_norm * rad_per * 0.3)
-                x_stud1 = int(reduce_r * r * np.cos(theta_stud1) + x_origin) / 600.0 * 100
-                y_stud1 = int(reduce_r * -1 * r * np.sin(theta_stud1) + y_origin) / 600.0 * 100
+                    # Button studie 2
+                    theta_stud2 = start + (weging_stud_norm * rad_per * 0.5) 
+                    x_stud2 = int(reduce_r * r * np.cos(theta_stud2) + x_origin) / image_size * 100.0 
+                    y_stud2 = int(reduce_r * -1 * r * np.sin(theta_stud2) + y_origin) / image_size * 100.0 
+                elif weging_stud_norm < 7.0 :
+                    reduce_r_stud = 0.6
+                    # Button studie 1
+                    theta_stud1 = start + (weging_stud_norm * rad_per * 0.5)
+                    x_stud1 = int(reduce_r_stud * reduce_r * r * np.cos(theta_stud1) + x_origin) / image_size * 100 + 2.0
+                    y_stud1 = int(reduce_r_stud * reduce_r * -1 * r * np.sin(theta_stud1) + y_origin) / image_size * 100 + 2.0
 
-				# Button studie 2
-                theta_stud2 = start + (weging_stud_norm * rad_per * 0.6) 
-                x_stud2 = int(reduce_r * r * np.cos(theta_stud2) + x_origin) / 600.0 * 100.0
-                y_stud2 = int(reduce_r * -1 * r * np.sin(theta_stud2) + y_origin) / 600.0 * 100.0
+                    # Button studie 2
+                    theta_stud2 = start + (weging_stud_norm * rad_per * 0.5) 
+                    x_stud2 = int(reduce_r * r * np.cos(theta_stud2) + x_origin) / image_size * 100.0 + 2.0
+                    y_stud2 = int(reduce_r * -1 * r * np.sin(theta_stud2) + y_origin) / image_size * 100.0 + 2.0
+                else:
+                    # Button studie 1
+                    theta_stud1 = start + (weging_stud_norm * rad_per * 0.3)
+                    x_stud1 = int(reduce_r * r * np.cos(theta_stud1) + x_origin) / image_size * 100 
+                    y_stud1 = int(reduce_r * -1 * r * np.sin(theta_stud1) + y_origin) / image_size * 100 
+
+    				# Button studie 2
+                    theta_stud2 = start + (weging_stud_norm * rad_per * 0.7) 
+                    x_stud2 = int(reduce_r * r * np.cos(theta_stud2) + x_origin) / image_size * 100.0 
+                    y_stud2 = int(reduce_r * -1 * r * np.sin(theta_stud2) + y_origin) / image_size * 100.0 
 
 				# Button studie
                 theta_stud = start + (weging_stud_norm * rad_per * 0.5)
-                x_stud = int(reduce_r * r * np.cos(theta_stud) + x_origin)  / 600.0 * 100.0
-                y_stud = int(reduce_r * -1 * r * np.sin(theta_stud) + y_origin) / 600.0 * 100.0
+                x_stud = int(reduce_r * r * np.cos(theta_stud) + x_origin)  / image_size * 100.0 
+                y_stud = int(reduce_r * -1 * r * np.sin(theta_stud) + y_origin) / image_size * 100.0 
 
                 # Button toekomst
                 theta_toek = start + weging_stud_norm * rad_per + (weging_toek_norm * rad_per * 0.5)
-                x_toek = int(reduce_r * r * np.cos(theta_toek) + x_origin) / 600.0 * 100.0
-                y_toek = int(reduce_r * -1 * r * np.sin(theta_toek) + y_origin) / 600.0 * 100.0
-
+                x_toek = int(reduce_r * r * np.cos(theta_toek) + x_origin) / image_size * 100.0
+                y_toek = int(reduce_r * -1 * r * np.sin(theta_toek) + y_origin) / image_size * 100.0 
                 # Button student
                 theta_soc = start + (weging_toek_norm + weging_stud_norm) * rad_per + (weging_soc_norm * 0.5 * rad_per)
-                x_soc = int(reduce_r * r * np.cos(theta_soc) + x_origin) / 600.0 * 100.0
-                y_soc = int(-1 * reduce_r * r * np.sin(theta_soc) + y_origin) / 600.0 * 100.0
+                x_soc = int(reduce_r * r * np.cos(theta_soc) + x_origin) / image_size * 100.0 
+                y_soc = int(-1 * reduce_r * r * np.sin(theta_soc) + y_origin) / image_size * 100.0 
 
                 username = request.user.username
                 firstname = request.user.userprofile.firstname
@@ -354,183 +370,185 @@ def docent(request):
 
             all_users = UserProfile.objects.all()
             for i in range(len(all_users)):
-            	user = all_users[i]
-            	if user.firstname != firstname or user.lastname !=lastname:
-            		message_not_found = "Geen match gevonden. Probeer opnieuw!"
-            		error = "True"
+                user = all_users[i]
+                if user.firstname != firstname or user.lastname !=lastname:
+                    message_not_found = "Geen match gevonden. Probeer opnieuw!"
+                    error = "True"
 
-            		response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
-            					'error':error,
-            		}
-            		return render(request, form, response)
-            	else:
-		            data_user = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
-		            modules_user = data_user.modules_set.all()
+                    response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
+                    			'error':error,
+                    }
+                    return render(request, form, response)
+                else:
+                    data_user = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
+                    modules_user = data_user.modules_set.all()
 
-		            data_request = request.POST
+                    data_request = request.POST
 
-		            firstname = data_user.firstname
-		            lastname = data_user.lastname
+                    firstname = data_user.firstname
+                    lastname = data_user.lastname
 
-		            form_userprofile = UserProfileForm(request.POST, instance=data_user)
-		            if form_userprofile.is_valid():
-		                temp = form_userprofile.save(commit=False)
-		                temp.firstname = firstname
-		                temp.lastname = lastname
-		                temp.weging_stud = data_user.weging_stud
-		                temp.weging_toek = data_user.weging_toek
-		                temp.weging_soc = data_user.weging_soc
-		                # temp.save()
-		                opslaan = "Succes"
-		            else:
-		                opslaan = "Failure"
+                    form_userprofile = UserProfileForm(request.POST, instance=data_user)
+                    if form_userprofile.is_valid():
+                        temp = form_userprofile.save(commit=False)
+                        temp.firstname = firstname
+                        temp.lastname = lastname
+                        temp.weging_stud = data_user.weging_stud
+                        temp.weging_toek = data_user.weging_toek
+                        temp.weging_soc = data_user.weging_soc
+                        # temp.save()
+                        opslaan = "Succes"
+                    else:
+                        opslaan = "Failure"
 
-		            index_modules_user_pending = []
-		            modules_user_pending = []
-		            index_modules_user_complete = []
-		            modules_user_complete = []
-		            index_modules_user_notdone = []
-		            modules_user_notdone = []
+                    index_modules_user_pending = []
+                    modules_user_pending = []
+                    index_modules_user_complete = []
+                    modules_user_complete = []
+                    index_modules_user_notdone = []
+                    modules_user_notdone = []
 
-		            for i in range(len(modules_user)):
-		            	if modules_user[i].status == 'Bezig':
-		            		modules_user_pending.append(modules_user[i])
-		            		index_modules_user_pending.append(i)
-		            	if modules_user[i].status == 'Voltooid':
-		            		modules_user_complete.append(modules_user[i])
-		            		index_modules_user_complete.append(i)
-		            	if modules_user[i].status == 'Niet gedaan':
-		            		modules_user_notdone.append(modules_user[i])
-		            		index_modules_user_notdone.append(i)
+                    for i in range(len(modules_user)):
+                        if modules_user[i].status == 'Bezig':
+                            modules_user_pending.append(modules_user[i])
+                            index_modules_user_pending.append(i)
+                        if modules_user[i].status == 'Voltooid':
+                        	modules_user_complete.append(modules_user[i])
+                        	index_modules_user_complete.append(i)
+                        if modules_user[i].status == 'Niet gedaan':
+                        	modules_user_notdone.append(modules_user[i])
+                        	index_modules_user_notdone.append(i)
 
-		            form_modules_actief = []
-		            form_modules_passief = []
-		            form_modules_cijfer = [] #cijfer uit het form
-		            form_modules_naam = []
-		            for i in range(len(modules_user_pending)):
-		            	if modules_user_pending[i].module_type == "Actief":
-			            	form_modules_actief.append(ModuleForm(request.POST, auto_id="form_modules_actief"+str(i), prefix=str(modules_user_pending[i].id_module)))
+                    form_modules_actief = []
+                    form_modules_passief = []
+                    form_modules_cijfer = [] #cijfer uit het form
+                    form_modules_naam = []
+                    for i in range(len(modules_user_pending)):
+                    	if modules_user_pending[i].module_type == "Actief":
+                        	form_modules_actief.append(ModuleForm(request.POST, auto_id="form_modules_actief"+str(i), prefix=str(modules_user_pending[i].id_module)))
 
-		            form_modules_cijfer_clean = []
-		            for i in range(len(form_modules_actief)):
-		            	form_temp = form_modules_actief[i]
-		            	if form_modules_actief[i]['cijfer'].value() == None:
-		            		form_modules_cijfer.append(0)
-		            	if form_modules_actief[i]['cijfer'].value() == "":
-		            		form_modules_cijfer.append(0)
-		            	if form_modules_actief[i]['cijfer'].value() == 0:
-		            		form_modules_cijfer.append(0)
-		            	else:
-		            		form_modules_cijfer.append(form_modules_actief[i]['cijfer'].value())
+                    form_modules_cijfer_clean = []
+                    for i in range(len(form_modules_actief)):
+                    	form_temp = form_modules_actief[i]
+                    	if form_modules_actief[i]['cijfer'].value() == None:
+                    		form_modules_cijfer.append(0)
+                    	if form_modules_actief[i]['cijfer'].value() == "":
+                    		form_modules_cijfer.append(0)
+                    	if form_modules_actief[i]['cijfer'].value() == 0:
+                    		form_modules_cijfer.append(0)
+                    	else:
+                    		form_modules_cijfer.append(form_modules_actief[i]['cijfer'].value())
 
-		            for i in range(len(form_modules_cijfer)):
-		            	if str(form_modules_cijfer[i]) != "None" and str(form_modules_cijfer[i]) != "":
-		            		form_modules_cijfer_clean.append(int(form_modules_cijfer[i]))
+                    for i in range(len(form_modules_cijfer)):
+                    	if str(form_modules_cijfer[i]) != "None" and str(form_modules_cijfer[i]) != "":
+                    		form_modules_cijfer_clean.append(int(form_modules_cijfer[i]))
 
-		            for i in range(len(modules_user_pending)):
-		            	if modules_user_pending[i].module_type == 'Passief' :
-		            		form_modules_passief.append( ModuleForm(request.POST, auto_id="form_modules_passief"+str(i), prefix=str(modules_user_pending[i].id_module) ) )         	
+                    for i in range(len(modules_user_pending)):
+                    	if modules_user_pending[i].module_type == 'Passief' :
+                    		form_modules_passief.append( ModuleForm(request.POST, auto_id="form_modules_passief"+str(i), prefix=str(modules_user_pending[i].id_module) ) )         	
 
-		            #determine which modules needs to be saved
-		            to_save = 0
-		            user_modules_cijfer = [] #cijfer van de user voor elke module
-		            for i in data_request:
-		            	for p in range(len(modules_user_pending)):
-		            		if i == modules_user_pending[p].id_module:
-		            			to_save = modules_user_pending[p].id_module
+                    #determine which modules needs to be saved
+                    to_save = 0
+                    user_modules_cijfer = [] #cijfer van de user voor elke module
+                    for i in data_request:
+                    	for p in range(len(modules_user_pending)):
+                    		if i == modules_user_pending[p].id_module:
+                    			to_save = modules_user_pending[p].id_module
 
-		            # Save changes of the correct module
-		            username = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
-		            modules_user = username.modules_set.all()
-		            cijfer_to_save = 0
-		            for i in range(len(modules_user_pending)) :
-		            	if modules_user_pending[i].id_module == to_save:
-		            		module_temp = modules_user_pending[i]
-		            		if module_temp.module_type == 'Actief':
-		            			index = str(to_save+'-cijfer')
-		            			cijfer_to_save = data_request[index]
-		            			module_temp.cijfer = cijfer_to_save
-		            			module_temp.status = 'Voltooid'
-		            			module_temp.save()
-		            			if module_temp.gebied == 'studie':
-		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            			if module_temp.gebied == 'studietoekomst':
-		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            				username.exp_toek += module_temp.experience_vast+ int(module_temp.cijfer) * int(module_temp.factor)
-		            			if module_temp.gebied == 'toekomst':
-		            				username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            			if module_temp.gebied == 'sociaaltoekomst':
-		            				username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            			if module_temp.gebied == 'sociaal':
-		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            			if module_temp.gebied == 'studiesociaal':
-		            				username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            				username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
-		            			username.bank += int(int(module_temp.cijfer) * module_temp.factor + int(module_temp.baten_vast))
-		            			username.save()
-		            		if module_temp.module_type == 'Passief':
-		            			index = str(to_save+'-cijfer')
-		            			module_temp.status = 'Voltooid'
-		            			module_temp.save()
-		            			if module_temp.gebied == 'studie':
-		            				username.exp_stud += module_temp.experience_vast
-		            			if module_temp.gebied == 'studietoekomst':
-		            				username.exp_stud += module_temp.experience_vast
-		            				username.exp_toek += module_temp.experience_vast
-		            			if module_temp.gebied == 'toekomst':
-		            				username.exp_toek += module_temp.experience_vast
-		            			if module_temp.gebied == 'sociaaltoekomst':
-		            				username.exp_toek += module_temp.experience_vast
-		            				username.exp_soc += module_temp.experience_vast
-		            			if module_temp.gebied == 'sociaal':
-		            				username.exp_soc += module_temp.experience_vast
-		            			if module_temp.gebied == 'studiesociaal':
-		            				username.exp_soc += module_temp.experience_vast
-		            				username.exp_stud += module_temp.experience_vast
-		            			username.bank += module_temp.baten_vast
+                    # Save changes of the correct module
+                    username = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
+                    modules_user = username.modules_set.all()
+                    cijfer_to_save = 0
+                    for i in range(len(modules_user_pending)) :
+                        if modules_user_pending[i].id_module == to_save:
+                            module_temp = modules_user_pending[i]
+                            if module_temp.module_type == 'Actief':
+                                index = str(to_save+'-cijfer')
+                                cijfer_to_save = data_request[index]
+                                module_temp.cijfer = cijfer_to_save
+                                module_temp.status = 'Voltooid'
+                                module_temp.save()
+                                if module_temp.gebied == 'studie':
+                                	username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                if module_temp.gebied == 'studietoekomst':
+                                	username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                	username.exp_toek += module_temp.experience_vast+ int(module_temp.cijfer) * int(module_temp.factor)
+                                if module_temp.gebied == 'toekomst':
+                                	username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                if module_temp.gebied == 'sociaaltoekomst':
+                                	username.exp_toek += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                	username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                if module_temp.gebied == 'sociaal':
+                                	username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                if module_temp.gebied == 'studiesociaal':
+                                	username.exp_soc += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                	username.exp_stud += module_temp.experience_vast + int(module_temp.cijfer) * int(module_temp.factor)
+                                username.bank += int(int(module_temp.cijfer) * module_temp.factor + int(module_temp.baten_vast))
+                                username.save()
+                            if module_temp.module_type == 'Passief':
+                                index = str(to_save+'-cijfer')
+                                module_temp.status = 'Voltooid'
+                                module_temp.save()
+                                
+                                if module_temp.gebied == 'studie':
+                                	username.exp_stud += module_temp.experience_vast
+                                if module_temp.gebied == 'studietoekomst':
+                                	username.exp_stud += module_temp.experience_vast
+                                	username.exp_toek += module_temp.experience_vast
+                                if module_temp.gebied == 'toekomst':
+                                	username.exp_toek += module_temp.experience_vast
+                                if module_temp.gebied == 'sociaaltoekomst':
+                                	username.exp_toek += module_temp.experience_vast
+                                	username.exp_soc += module_temp.experience_vast
+                                if module_temp.gebied == 'sociaal':
+                                	username.exp_soc += module_temp.experience_vast
+                                if module_temp.gebied == 'studiesociaal':
+                                	username.exp_soc += module_temp.experience_vast
+                                	username.exp_stud += module_temp.experience_vast
+
+                                username.bank += module_temp.baten_vast
                                 username.exp_tot = username.exp_stud + username.exp_soc + username.exp_toek
                                 username.save()
 
-		            #Update status list
-		            modules_user_pending = []
-		            modules_user_complete = []
-		            modules_user_notdone = []
-		            index_actief = []
-		            for i in range(len(modules_user)):
-		            	if modules_user[i].status == 'Bezig':
-		            		modules_user_pending.append(modules_user[i])
-		            		index_modules_user_pending.append(i)
-		            		if modules_user[i].module_type == 'Actief' :
-		            			index_actief.append(i)
-		            	if modules_user[i].status == 'Voltooid':
-		            		modules_user_complete.append(modules_user[i])
-		            		index_modules_user_complete.append(i)
-		            	if modules_user[i].status == 'Niet gedaan':
-		            		modules_user_notdone.append(modules_user[i])
-		            		index_modules_user_notdone.append(i)
+                    #Update status list
+                    modules_user_pending = []
+                    modules_user_complete = []
+                    modules_user_notdone = []
+                    index_actief = []
+                    for i in range(len(modules_user)):
+                    	if modules_user[i].status == 'Bezig':
+                    		modules_user_pending.append(modules_user[i])
+                    		index_modules_user_pending.append(i)
+                    		if modules_user[i].module_type == 'Actief' :
+                    			index_actief.append(i)
+                    	if modules_user[i].status == 'Voltooid':
+                    		modules_user_complete.append(modules_user[i])
+                    		index_modules_user_complete.append(i)
+                    	if modules_user[i].status == 'Niet gedaan':
+                    		modules_user_notdone.append(modules_user[i])
+                    		index_modules_user_notdone.append(i)
 
-		            response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 
-		            	'message_found':message_found,
-		                'data_user':data_user, 
-		                'modules_user':modules_user, #'modules_user_cijfer':modules_user_cijfer, 
-		                'modules_user_pending':modules_user_pending,
-		                'modules_user_complete':modules_user_complete,
-		                'modules_user_notdone':modules_user_notdone,
-		                'form_modules_cijfer':form_modules_cijfer,
-		                'user_modules_cijfer':user_modules_cijfer,
-		                'form_modules_naam':form_modules_naam,
-		                'form_modules_actief':form_modules_actief,
-		                'form_modules_cijfer_clean':form_modules_cijfer_clean,
-		                'username':username,
+                    response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 
+                        'message_found':message_found,
+                        'data_user':data_user, 
+                        'modules_user':modules_user, #'modules_user_cijfer':modules_user_cijfer, 
+                        'modules_user_pending':modules_user_pending,
+                        'modules_user_complete':modules_user_complete,
+                        'modules_user_notdone':modules_user_notdone,
+                        'form_modules_cijfer':form_modules_cijfer,
+                        'user_modules_cijfer':user_modules_cijfer,
+                        'form_modules_naam':form_modules_naam,
+                        'form_modules_actief':form_modules_actief,
+                        'form_modules_cijfer_clean':form_modules_cijfer_clean,
+                        'username':username,
                         'teacher':teacher,
-		            }
-		            for i in range(len(form_modules_actief)) :
-		                response['form_modules_actief'+str(i)] = form_modules_actief[i]
+                    }
+                    for i in range(len(form_modules_actief)) :
+                        response['form_modules_actief'+str(i)] = form_modules_actief[i]
 
-		            form_modules_cijfer_clean = []
+                    form_modules_cijfer_clean = []
 
-		            return render(request, form, response)
+                    return render(request, form, response)
 
         else:
             message_not_found = "Voer een valide naam in!"

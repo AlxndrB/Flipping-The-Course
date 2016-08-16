@@ -70,7 +70,7 @@ class Modules(models.Model):
         experience_flex = models.IntegerField('Flexibele exp', default=0)
         factor = models.PositiveIntegerField('Factor module', default=0)
         niveau = models.IntegerField('Niveau van course', default=1)
-        module_type = models.CharField(max_length=10, choices=TYPES_MODULES, default='Passief')
+        module_type = models.CharField(max_length=15, choices=TYPES_MODULES, default='Passief')
         cijfer = models.PositiveIntegerField('Cijfer', default=0 , validators=[MaxValueValidator(10),])
         status = models.CharField(max_length=15, choices=STATUS_MODULES, default='Niet gedaan' )
         id_module = models.CharField(max_length=15, default='' )

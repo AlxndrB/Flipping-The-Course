@@ -31,6 +31,14 @@
     max-height:100%;
 }
 
+.tooltip_modules {
+    position: relative;
+    opacity: 1;
+    display: inline-block;
+    font-size: 18px;
+}
+
+
 </style>
 
 <script>
@@ -61,15 +69,23 @@ modules_user_bezig : {{modules_user_bezig}} <br> -->
 
 <!-- weging_toek_norm : {{weging_toek_norm}} <br>
 weging_soc_norm : {{weging_soc_norm}} <br>
-weging_stud_norm : {{weging_stud_norm}} <br>
-weging_stud : {{weging_stud}} <br>
-weging_tot : {{weging_tot}} -->
+weging_stud_norm : {{weging_stud_norm}} <br> -->
+<!-- weging_stud : {{weging_stud}} <br> -->
+<!-- weging_tot : {{weging_tot}} -->
 
 
 <div class="col-md-6">
 <div class="panel panel-default">
 	<div class="panel-heading">
-    	<h3 class="panel-title">Modules</h3>
+    	<h3 class="panel-title">
+    		<div class="tooltip_modules">Modules 
+  				<span class="tooltiptext_modules"> 
+  					Hieronder staan de modules voor de aandachtsgebieden weer gegeven. <br>
+  					<br>
+  					Beweeg je muis over de witte icoontjes om meer te weten te komen over de modules!
+  				</span>
+			</div> 
+    	</h3>
   	</div>
   	
   	<div class="panel-body img-responsive well" style="text-align: center;">
@@ -78,44 +94,68 @@ weging_tot : {{weging_tot}} -->
 		<div id="outer">
 
   		{% load staticfiles%} 
+			<img src="/static/main/user_piecharts/{{user}}.png?cachebuster={{uuid}" class="img-responsive" style="display:inline-block; width:auto; height:auto; max-width:100%; max-height:100%;"> 
 
-							<img src="/static/main/user_piecharts/{{user}}.png?cachebuster={{uuid}" class="img-responsive" style="display:inline-block; width:auto; height:auto; max-width:100%; max-height:100%;"> 
+  		{% if user.weging_stud != 0 %}
 
-    <button class="star_five" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
-    	<span> </span>
-    	<!-- opendag -->
-    </button>
-    
-    <button class="button_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
-    	<!-- Webklas  -->
-    </button>
+  			{% if weging_stud_norm < 7%}
+				<button class="button_1_2" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
+				<span> </span>
+				<!-- opendag -->
+				</button>
 
-    <button class="button_3" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; "> 
-    	<!-- Dag student  -->
-    </button>
+				<button class="button_2_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
+				<!-- Webklas  -->
+				</button>
 
-	<button class="button_4" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
-		<!-- Excursie  -->
-    </button>
+		    {% else %}
+				<button class="button_1" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
+				<span> </span>
+				<!-- opendag -->
+				</button>
 
-    <button class="button_1" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
-    	Case 
-    </button>
+				<button class="button_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
+				<!-- Webklas  -->
+				</button>
 
-	<button class="button_1" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
-		Borrel 
-	</button>
+		    {% endif %}
+
+
+	  		{% if user.weging_soc != 0 %}
+				<button class="button_3" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; "> 
+				</button>
+			<!-- Dag student  -->
+	  		{% endif %}
+
+  		{% endif %}
+
+
+  		{% if user.weging_toek != 0 %}
+
+  			{% if weging_toek_norm < 5%}
+			    <button class="button_5_2" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%;" > 
+			    </button>
+
+		    {% else %}
+				<button class="button_5" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
+				</button>
+
+		    {% endif %}
+
+	  		{% if user.weging_soc != 0 %}
+				<button class="button_4" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
+					<!-- Excursie  -->
+			    </button>
+	  		{% endif %}
+
+  		{% endif %}
+
+  		{% if user.weging_soc != 0 %}
+			<button class="button_6" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
+			</button>
+  		{% endif %}
 
 		</div>
-
-
-
-		
-		{% include "main/Piechart.html" %}
-
-		<!-- </div> -->
-
-		
 
 	</div>
 </div>
@@ -124,7 +164,16 @@ weging_tot : {{weging_tot}} -->
 <div class="col-md-6 ">
 <div class="panel panel-default ">
 	<div class="panel-heading">
-    	<h3 class="panel-title">Voortgang</h3>
+		<h3 class="panel-title">
+    	    <div class="tooltip_voortgang">Voorgang 
+  				<span class="tooltiptext_voortgang"> 
+  					Dit panel laat jouw voortgang zien. <br>
+  					<br>
+  					Experience: <br>
+  				</span>
+			</div> 
+    	</h3>
+
   	</div>
   	<div class="panel-body well">
 
