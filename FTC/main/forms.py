@@ -26,3 +26,6 @@ class BuyModuleForm(forms.ModelForm):
 
 class ExportPDFForm(forms.Form):
 	export_pdf = forms.IntegerField(initial=0)
+
+class CounterRedirect(forms.Form):
+    counter_redirect = forms.IntegerField(initial=0)

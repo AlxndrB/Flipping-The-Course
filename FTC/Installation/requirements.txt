@@ -1,0 +1,8 @@
+######### Requirements for E-Choice game ##########
+
+python == 3.4
+Django == 1.9
+weasyprint >= 0.3
+numpy >= 1.8.2
+matplotlib.pylab >= 1.8.2
+django-extensions

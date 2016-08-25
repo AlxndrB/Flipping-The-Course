@@ -14,6 +14,8 @@ from weasyprint import HTML, CSS
 from django.template import RequestContext
 from django.conf import settings
 
+import time
+
 def MakePieChart(request):
         # make a square figure and axes
         fig, ax = plt.subplots(1, figsize=(9,9))
@@ -66,39 +68,42 @@ def MakePieChart(request):
 
 def login(request):
         if request.user.is_authenticated():
-                return HttpResponseRedirect('/loggedin')
+            return HttpResponseRedirect('/loggedin')
         else:
-                username = request.POST.get('username', "")
-                password = request.POST.get('password', "")
-                if username != "":
-                        user = auth.authenticate(username=username,
-                                                 password=password)
-                        if user is not None:
-                            if user.userprofile.is_student:
-                                auth.login(request, user)
-                                return HttpResponseRedirect('/loggedin')
-                            if user.userprofile.is_teacher:
-                                auth.login(request, user)
-                                return HttpResponseRedirect('/docent')
+            username = request.POST.get('username', "")
+            password = request.POST.get('password', "")
+            if username != "":
+                    user = auth.authenticate(username=username,
+                                             password=password)
+                    if user is not None:
+                        if user.userprofile.is_student:
+                            auth.login(request, user)
+                            return HttpResponseRedirect('/loggedin')
+                        if user.userprofile.is_teacher:
+                            auth.login(request, user)
+                            return HttpResponseRedirect('/docent')
 
-                        else:
-                                error = 'invalide username or password!'
-                                form = 'registration/login.html'
-                                return render(request,
-                                              form,
-                                              {'error_value': error})
-                else:
-                        form = 'registration/login.html'
-                        error = ''
-                        return render(request, form, {'error_value': error})
+                    else:
+                            error = 'invalide username or password!'
+                            form = 'registration/login.html'
+                            return render(request,
+                                          form,
+                                          {'error_value': error})
+            else:
+                    form = 'registration/login.html'
+                    error = ''
+                    return render(request, form, {'error_value': error})
 
 
 def loggedin(request):
+
         Gebruiker = request.user.userprofile
-        need_save = 0
-        if not request.user.is_authenticated():
-                return HttpResponseRedirect('/login')
-        else:
+        if Gebruiker.is_student == True :
+
+            need_save = 0
+            if not request.user.is_authenticated():
+                    return HttpResponseRedirect('/login')
+            else:
                 Gebruiker = request.user.userprofile
                 firstname = Gebruiker.firstname
                 lastname = Gebruiker.lastname
@@ -193,6 +198,7 @@ def loggedin(request):
                 start = .5 * np.pi
                 reduce_r = 0.65
                 image_size = 100.0
+                r_label = 1.2
 
                 #Normalizeren van user wegingen
                 weging_tot = Gebruiker.weging_stud + Gebruiker.weging_toek + Gebruiker.weging_soc
@@ -243,20 +249,28 @@ def loggedin(request):
                     x_stud1 = int(reduce_r * r * np.cos(theta_stud1) + x_origin) / image_size * 100 
                     y_stud1 = int(reduce_r * -1 * r * np.sin(theta_stud1) + y_origin) / image_size * 100 
 
-    				# Button studie 2
+        			# Button studie 2
                     theta_stud2 = start + (weging_stud_norm * rad_per * 0.7) 
                     x_stud2 = int(reduce_r * r * np.cos(theta_stud2) + x_origin) / image_size * 100.0 
                     y_stud2 = int(reduce_r * -1 * r * np.sin(theta_stud2) + y_origin) / image_size * 100.0 
 
-				# Button studie
+        		# Button studie
                 theta_stud = start + (weging_stud_norm * rad_per * 0.5)
                 x_stud = int(reduce_r * r * np.cos(theta_stud) + x_origin)  / image_size * 100.0 
                 y_stud = int(reduce_r * -1 * r * np.sin(theta_stud) + y_origin) / image_size * 100.0 
+
+                x_stud_label = int(r_label * r * np.cos(theta_stud) + x_origin)  / image_size * 100.0 
+                y_stud_label = int(r_label * -1 * r * np.sin(theta_stud) + y_origin) / image_size * 100.0 
 
                 # Button toekomst
                 theta_toek = start + weging_stud_norm * rad_per + (weging_toek_norm * rad_per * 0.5)
                 x_toek = int(reduce_r * r * np.cos(theta_toek) + x_origin) / image_size * 100.0
                 y_toek = int(reduce_r * -1 * r * np.sin(theta_toek) + y_origin) / image_size * 100.0 
+
+                x_toek_label = int(r * r_label * np.cos(theta_toek) + x_origin) / image_size * 100.0
+                y_toek_label = int(r * r_label * -1 * np.sin(theta_toek) + y_origin) / image_size * 100.0 
+
+
                 # Button student
                 theta_soc = start + (weging_toek_norm + weging_stud_norm) * rad_per + (weging_soc_norm * 0.5 * rad_per)
                 x_soc = int(reduce_r * r * np.cos(theta_soc) + x_origin) / image_size * 100.0 
@@ -287,7 +301,8 @@ def loggedin(request):
                             'x_stud': x_stud, 'y_stud': y_stud,
                             'x_stud1': x_stud1, 'y_stud1': y_stud1,
                             'x_stud2': x_stud2, 'y_stud2': y_stud2,
-                            'x_toek': x_toek, 'y_toek': y_toek, 'x_soc': x_soc, 'y_soc': y_soc,
+                            'x_toek': x_toek, 'y_toek': y_toek, 'x_toek_label':x_toek_label, 'y_toek_label':y_toek_label, 
+                            'x_soc': x_soc, 'y_soc': y_soc,
                             'weging_stud_norm':weging_stud_norm, 'weging_toek_norm':weging_toek_norm, 'weging_soc_norm':weging_soc_norm,
                             'weging_stud':Gebruiker.weging_stud,
                             'weging_tot':weging_tot,
@@ -302,10 +317,14 @@ def loggedin(request):
                             'kosten_totaal': kosten_totaal, 'baten_totaal':baten_totaal,
                             'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
                             'exp_user_totaal_norm':exp_user_totaal_norm,
+                            'data_request':data_request,
                 }
                 for i in range(len(form_buy_module_list)):
                 	response['buy_'+str(i)] = form_buy_module_list[i]
                 return render(request, form, response)
+        else:
+            page_not_permitted(request)
+            return HttpResponseRedirect('/page_not_permitted')
 
 
 def logout(request):
@@ -314,72 +333,97 @@ def logout(request):
 
 def weging(request):
     Gebruiker = request.user.userprofile
-    firstname = Gebruiker.firstname
-    lastname = Gebruiker.lastname    
 
-    if request.method == "POST":
-        form_userprofile = UserProfileForm(request.POST, instance=Gebruiker)
+    if Gebruiker.is_student == True :
+        firstname = Gebruiker.firstname
+        lastname = Gebruiker.lastname    
 
-        weging_stud = form_userprofile['weging_stud'].value()
-        weging_toek = form_userprofile['weging_toek'].value()
-        weging_soc  = form_userprofile['weging_soc'].value()
+        if request.method == "POST":
+            form_userprofile = UserProfileForm(request.POST, instance=Gebruiker)
 
-        if form_userprofile.is_valid():
-            form_userprofile.save();
-            MakePieChart(request)
-            return HttpResponseRedirect('/loggedin')
+            weging_stud = form_userprofile['weging_stud'].value()
+            weging_toek = form_userprofile['weging_toek'].value()
+            weging_soc  = form_userprofile['weging_soc'].value()
+
+            if form_userprofile.is_valid():
+                form_userprofile.save();
+                MakePieChart(request)
+                return HttpResponseRedirect('/loggedin')
+
+            else:
+                form = 'main/weging.html'
+                response = {'firstname':firstname, 'lastname':lastname,
+                    'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
+                    'form_userprofile':form_userprofile,
+                    }
+
+                return render(request, form, response)
 
         else:
+            form_userprofile = UserProfileForm()
+            weging_stud = Gebruiker.weging_stud
+            weging_toek = Gebruiker.weging_toek
+            weging_soc = Gebruiker.weging_soc
+
             form = 'main/weging.html'
             response = {'firstname':firstname, 'lastname':lastname,
+                'Gebruiker':request.user.userprofile,
                 'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
                 'form_userprofile':form_userprofile,
                 }
 
             return render(request, form, response)
-
     else:
-        form_userprofile = UserProfileForm()
-        weging_stud = Gebruiker.weging_stud
-        weging_toek = Gebruiker.weging_toek
-        weging_soc = Gebruiker.weging_soc
-
-        form = 'main/weging.html'
-        response = {'firstname':firstname, 'lastname':lastname,
-            'Gebruiker':request.user.userprofile,
-            'weging_stud':weging_stud, 'weging_toek':weging_toek, 'weging_soc':weging_soc,
-            'form_userprofile':form_userprofile,
-            }
-
-        return render(request, form, response)
+        page_not_permitted(request)
+        return HttpResponseRedirect('/page_not_permitted')
 
 previous_search = []
 previous_username = []
 def docent(request):
     form = "main/docent.html"
     form_userprofile = UserProfileForm()
+
     teacher = request.user.userprofile
 
-    if request.method == "POST":
-        firstname = request.POST.get('firstname', "")
-        lastname = request.POST.get('lastname', "")
-        data_request = request.POST
+    if teacher.is_teacher == True :
+        if request.method == "POST":
+            firstname = request.POST.get('firstname', "")
+            lastname = request.POST.get('lastname', "")
+            data_request = request.POST
 
-        if firstname != "" and lastname != "":
-            message_found = "True"
+            if firstname != "" and lastname != "":
+                message_found = "True"
 
-            all_users = UserProfile.objects.all()
-            for i in range(len(all_users)):
-                user = all_users[i]
-                if user.firstname != firstname or user.lastname !=lastname:
+                all_users = UserProfile.objects.all()
+                user_in = False 
+                user_is_teacher = False
+                for i in range(len(all_users)):
+                    user = all_users[i]
+                    if user.firstname.lower() == firstname.lower() and user.lastname.lower() == lastname.lower():
+                        user_in = True
+                        if user.is_teacher:
+                            user_is_teacher = True;
+                        user_searched = user
+
+                if user_in == False:
                     message_not_found = "Geen match gevonden. Probeer opnieuw!"
                     error = "True"
 
                     response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
-                    			'error':error,
+                    			'error':error, 'all_users':all_users,
                     }
                     return render(request, form, response)
-                else:
+
+                if user_in == True and user_is_teacher == True:
+                    message_not_found = "Geen zoekresultaten mogelijk voor een docent!"
+                    error = "True"
+
+                    response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
+                                'error':error, 'all_users':all_users,
+                    }
+                    return render(request, form, response)
+
+                elif user_in == True and user_is_teacher == False:
                     data_user = UserProfile.objects.all().get(firstname=firstname, lastname=lastname)
                     modules_user = data_user.modules_set.all()
 
@@ -424,7 +468,7 @@ def docent(request):
                     form_modules_cijfer = [] #cijfer uit het form
                     form_modules_naam = []
                     for i in range(len(modules_user_pending)):
-                    	if modules_user_pending[i].module_type == "Actief":
+                        if modules_user_pending[i].module_type == "Actief":
                         	form_modules_actief.append(ModuleForm(request.POST, auto_id="form_modules_actief"+str(i), prefix=str(modules_user_pending[i].id_module)))
 
                     form_modules_cijfer_clean = []
@@ -542,6 +586,7 @@ def docent(request):
                         'form_modules_cijfer_clean':form_modules_cijfer_clean,
                         'username':username,
                         'teacher':teacher,
+                        'data_request':data_request,
                     }
                     for i in range(len(form_modules_actief)) :
                         response['form_modules_actief'+str(i)] = form_modules_actief[i]
@@ -550,123 +595,150 @@ def docent(request):
 
                     return render(request, form, response)
 
+                # elif user_in == True and user_searched.is_teacher == True :
+                #     message_not_found = "Voer een valide naam in!"
+                #     error = "True"
+                #     response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
+                #                 'error':error,'teacher':teacher,
+                #     }
+
+            else:
+                message_not_found = "Voer een valide naam in!"
+                error = "True"
+                response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
+                			'error':error,'teacher':teacher,
+                }
+
+                return render(request, form, response)
+
         else:
-            message_not_found = "Voer een valide naam in!"
-            error = "True"
-            response = {'form_userprofile':form_userprofile, 'firstname':firstname, 'lastname': lastname, 'data_request':data_request, 'message_not_found': message_not_found,
-            			'error':error,'teacher':teacher,
+            response = {'form_userprofile':form_userprofile,'teacher':teacher,
             }
 
             return render(request, form, response)
 
     else:
-        response = {'form_userprofile':form_userprofile,'teacher':teacher,
-        }
-
-        return render(request, form, response)
+        page_not_permitted(request)
+        return HttpResponseRedirect('/page_not_permitted')
 
 def vragen(request):
         Gebruiker = request.user.userprofile
-        firstname = Gebruiker.firstname
-        lastname = Gebruiker.lastname
-        form = 'main/vragen.html'
-        import time
-        localtime = time.localtime(time.time())
-        year = localtime[0]
-        month = localtime[1]
-        day = localtime[2]
-        hour = localtime[3]+2
-        minute = localtime[4] 
-        second = localtime[5]
+
+        if Gebruiker.is_student == True:
+
+            firstname = Gebruiker.firstname
+            lastname = Gebruiker.lastname
+            form = 'main/vragen.html'
+            import time
+            localtime = time.localtime(time.time())
+            year = localtime[0]
+            month = localtime[1]
+            day = localtime[2]
+            hour = localtime[3]+2
+            minute = localtime[4] 
+            second = localtime[5]
 
 
-        question_form = []
-        for i in range(12):
-                question_form.append(QuestionForm(prefix=str(i), auto_id='id_%s'))
+            question_form = []
+            for i in range(12):
+                    question_form.append(QuestionForm(prefix=str(i), auto_id='id_%s'))
 
-        if request.method == "POST":
-                A = Gebruiker
-                Aquest = A.questions_set.all()
-                for i in range(12):
-                        question_data = QuestionForm(request.POST, prefix=str(i))
-                        temp = Questions.objects.create(
-                                question =  question_data['question'].value(),
-                                answers =  question_data['answers'].value(),
-                                gebied =  question_data['gebied'].value(),
-                                userprofile = A,
-                                naam_question_gebruiker = str(A)+'_q'+str(i)+'_'+str(year)+'-'+str(month)+'-'+str(day)+'_'+str(hour)+':'+str(minute)+':'+str(second),
-                                )
-                        temp.save()
-                        A.questions_set.add(temp)
-                return HttpResponseRedirect('/weging')
+            if request.method == "POST":
+                    A = Gebruiker
+                    Aquest = A.questions_set.all()
+                    for i in range(12):
+                            question_data = QuestionForm(request.POST, prefix=str(i))
+                            temp = Questions.objects.create(
+                                    question =  question_data['question'].value(),
+                                    answers =  question_data['answers'].value(),
+                                    gebied =  question_data['gebied'].value(),
+                                    userprofile = A,
+                                    naam_question_gebruiker = str(A)+'_q'+str(i)+'_'+str(year)+'-'+str(month)+'-'+str(day)+'_'+str(hour)+':'+str(minute)+':'+str(second),
+                                    )
+                            temp.save()
+                            A.questions_set.add(temp)
+                    return HttpResponseRedirect('/weging')
 
-        stud_lijst = Gebruiker.questions_set.all().filter(gebied="studie")
-        stud_lijst = stud_lijst.order_by('-timestamp')[:4]
-        toek_lijst = Gebruiker.questions_set.all().filter(gebied="toekomst")
-        toek_lijst = toek_lijst.order_by('-timestamp')[:4]
-        soc_lijst = Gebruiker.questions_set.all().filter(gebied="sociaal")
-        soc_lijst = soc_lijst.order_by('-timestamp')[:4]
+            stud_lijst = Gebruiker.questions_set.all().filter(gebied="studie")
+            stud_lijst = stud_lijst.order_by('-timestamp')[:4]
+            toek_lijst = Gebruiker.questions_set.all().filter(gebied="toekomst")
+            toek_lijst = toek_lijst.order_by('-timestamp')[:4]
+            soc_lijst = Gebruiker.questions_set.all().filter(gebied="sociaal")
+            soc_lijst = soc_lijst.order_by('-timestamp')[:4]
 
-        response = {'stud_lijst': stud_lijst,
-                    'toek_lijst': toek_lijst,
-                    'soc_lijst': soc_lijst,
-                    'firstname': firstname,
-                    'lastname': lastname,
-                    'localtime':localtime,
-                    }
-        i = 0
-        for items in question_form:
-                response['qform' + str(i)] = items
-                i += 1
+            response = {'stud_lijst': stud_lijst,
+                        'toek_lijst': toek_lijst,
+                        'soc_lijst': soc_lijst,
+                        'firstname': firstname,
+                        'lastname': lastname,
+                        'localtime':localtime,
+                        }
+            i = 0
+            for items in question_form:
+                    response['qform' + str(i)] = items
+                    i += 1
 
-        return render(request, form, response)
+            return render(request, form, response)
+
+        else:
+            page_not_permitted(request)
+            return HttpResponseRedirect('/page_not_permitted')
 
 def pdf_export(request):
     Gebruiker = request.user.userprofile
-    firstname = Gebruiker.firstname
-    lastname = Gebruiker.lastname
-    form = 'main/pdf_export.html'
-    user = Gebruiker
+    if Gebruiker.is_student == True:
+        firstname = Gebruiker.firstname
+        lastname = Gebruiker.lastname
+        form = 'main/pdf_export.html'
+        user = Gebruiker
 
-    modules_user = user.modules_set.all()
+        modules_user = user.modules_set.all()
 
-    temp = ExportPDFForm()
+        temp = ExportPDFForm()
 
-    exp_user_stud_norm = Gebruiker.exp_stud / 1000.0 * 100
-    exp_user_soc_norm = Gebruiker.exp_soc / 1000.0 * 100
-    exp_user_toek_norm = Gebruiker.exp_toek / 1000.0 * 100
-    exp_user_totaal_norm = exp_user_stud_norm + exp_user_soc_norm + exp_user_toek_norm
-    success = 'success'
-    pdf_export_selector = 'True'
+        exp_user_stud_norm = Gebruiker.exp_stud / 1000.0 * 100
+        exp_user_soc_norm = Gebruiker.exp_soc / 1000.0 * 100
+        exp_user_toek_norm = Gebruiker.exp_toek / 1000.0 * 100
+        exp_user_totaal_norm = exp_user_stud_norm + exp_user_soc_norm + exp_user_toek_norm
+        success = 'success'
+        pdf_export_selector = 'True'
 
-    data_request = 0 
-    if request.method == "POST":
-        temp = ExportPDFForm(request.POST)
-        data_request = request.POST
+        data_request = 0 
+        if request.method == "POST":
+            temp = ExportPDFForm(request.POST)
+            data_request = request.POST
 
-        html_template = get_template('main/pdf_export_frame.html')
-        # rendered_html = html_template.render(RequestContext(request, {'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
-        #         'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
-        #         'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
-        #             })).encode(encoding="UTF-8")
-        rendered_html = html_template.render({'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
-                'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
-                'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
-                'exp_stud':Gebruiker.exp_stud, 'exp_toek':Gebruiker.exp_toek, 'exp_soc':Gebruiker.exp_soc, 'exp_tot':Gebruiker.exp_tot,
-                    }).encode(encoding="UTF-8")
+            html_template = get_template('main/pdf_export_frame.html')
+            # rendered_html = html_template.render(RequestContext(request, {'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
+            #         'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+            #         'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
+            #             })).encode(encoding="UTF-8")
+            rendered_html = html_template.render({'firstname':firstname, 'lastname':lastname, 'data_request':data_request,
+                    'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+                    'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'pdf_export_selector':pdf_export_selector,
+                    'exp_stud':Gebruiker.exp_stud, 'exp_toek':Gebruiker.exp_toek, 'exp_soc':Gebruiker.exp_soc, 'exp_tot':Gebruiker.exp_tot,
+                        }).encode(encoding="UTF-8")
 
-        pdf_file = HTML(string=rendered_html,base_url=request.build_absolute_uri()).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
-        # pdf_file = HTML(string=rendered_html).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
+            pdf_file = HTML(string=rendered_html,base_url=request.build_absolute_uri()).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
+            # pdf_file = HTML(string=rendered_html).write_pdf(stylesheets=[CSS('main/static/main/css/css_pdf_export.css')])
 
-        response = HttpResponse(pdf_file, content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="export_template.pdf"'
+            response = HttpResponse(pdf_file, content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="export_template.pdf"'
 
-        return response
+            return response
 
-    response = {'firstname':firstname, 'lastname':lastname, 'data_request':data_request, 'form_pdf_export':temp,
-                'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
-                'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'success':success,
-    }
+        response = {'firstname':firstname, 'lastname':lastname, 'data_request':data_request, 'form_pdf_export':temp,
+                    'exp_user_stud_norm': exp_user_stud_norm, 'exp_user_soc_norm':exp_user_soc_norm, 'exp_user_toek_norm':exp_user_toek_norm,
+                    'exp_user_totaal_norm':exp_user_totaal_norm, 'user':user, 'modules_user':modules_user,'success':success,
+        }
 
-    return render(request, form, response)
+        return render(request, form, response)
+    else:
+        page_not_permitted(request)
+        return HttpResponseRedirect('/page_not_permitted')
     
+def page_not_permitted(request):
+    form = 'main/page_not_permitted.html'
+    Gebruiker = request.user.userprofile
+    response = {'Gebruiker':Gebruiker}
+    return render(request, form, response )

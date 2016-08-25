@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^vragen', views.vragen),
     url(r'^weging', views.weging),
     url(r'^docent', views.docent),
-    url(r'^pdf_export', views.pdf_export)
+    url(r'^pdf_export', views.pdf_export),
+    url(r'^page_not_permitted', views.page_not_permitted),
 ]

@@ -14,7 +14,6 @@
 </div>
  
 <style>
-
 .button_red {
     color: red;
 }
@@ -31,13 +30,42 @@
     max-height:100%;
 }
 
-.tooltip_modules {
-    position: relative;
-    opacity: 1;
-    display: inline-block;
-    font-size: 18px;
+/*@keyframes cf3FadeInOut {
+    0% { opacity:1; }
+    45% { opacity:1; }
+    55% { opacity:0; }
+    100% { opacity:0; }
 }
 
+.top_toek_soc {
+	left:0;
+	top:0;
+    animation-name: cf3FadeInOut;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-duration: 10s;
+    animation-direction: alternate;
+}
+.bottom_toek_soc {
+	left:0;
+	top:0;
+}
+.button_4:hover:after {
+    position:relative;
+    display:table;
+    content:'Excursie';
+    width:auto;
+    padding:20% 0% 20% 0%;
+    top:0;
+    font-size:7px;
+    color: white;
+}
+.button_4:hover .top_toek_soc{
+    display:none;
+}
+.button_4:hover .bottom_toek_soc{
+    display:none;
+}*/
 
 </style>
 
@@ -73,6 +101,16 @@ weging_stud_norm : {{weging_stud_norm}} <br> -->
 <!-- weging_stud : {{weging_stud}} <br> -->
 <!-- weging_tot : {{weging_tot}} -->
 
+<!-- x_toek_label : {{x_toek_label}}
+y_toek_label : {{y_toek_label}}
+
+{% for items in modules %}
+{{items.id_module}}
+
+{% endfor %} -->
+
+data reques: {{data_request}}
+
 
 <div class="col-md-6">
 <div class="panel panel-default">
@@ -90,72 +128,7 @@ weging_stud_norm : {{weging_stud_norm}} <br> -->
   	
   	<div class="panel-body img-responsive well" style="text-align: center;">
 
-
-		<div id="outer">
-
-  		{% load staticfiles%} 
-			<img src="/static/main/user_piecharts/{{user}}.png?cachebuster={{uuid}" class="img-responsive" style="display:inline-block; width:auto; height:auto; max-width:100%; max-height:100%;"> 
-
-  		{% if user.weging_stud != 0 %}
-
-  			{% if weging_stud_norm < 7%}
-				<button class="button_1_2" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
-				<span> </span>
-				<!-- opendag -->
-				</button>
-
-				<button class="button_2_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
-				<!-- Webklas  -->
-				</button>
-
-		    {% else %}
-				<button class="button_1" data-toggle="modal" data-target="#opendagModal" style="position:absolute; left:{{x_stud1}}%; top:{{y_stud1}}%; ">
-				<span> </span>
-				<!-- opendag -->
-				</button>
-
-				<button class="button_2" data-toggle="modal" data-target="#webklasModal" style="position:absolute; left:{{x_stud2}}%; top:{{y_stud2}}%"> 
-				<!-- Webklas  -->
-				</button>
-
-		    {% endif %}
-
-
-	  		{% if user.weging_soc != 0 %}
-				<button class="button_3" data-toggle="modal" data-target="#dag_studentModal" style="position:absolute; left:{{x_soc_stud}}%; top:{{y_soc_stud}}%; "> 
-				</button>
-			<!-- Dag student  -->
-	  		{% endif %}
-
-  		{% endif %}
-
-
-  		{% if user.weging_toek != 0 %}
-
-  			{% if weging_toek_norm < 5%}
-			    <button class="button_5_2" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%;" > 
-			    </button>
-
-		    {% else %}
-				<button class="button_5" data-toggle="modal" data-target="#caseModal" style="position:absolute; left:{{x_toek}}%; top:{{y_toek}}%"> 
-				</button>
-
-		    {% endif %}
-
-	  		{% if user.weging_soc != 0 %}
-				<button class="button_4" data-toggle="modal" data-target="#excursieModal" style="position:absolute; left:{{x_toek_soc}}%; top:{{y_toek_soc}}%"> 
-					<!-- Excursie  -->
-			    </button>
-	  		{% endif %}
-
-  		{% endif %}
-
-  		{% if user.weging_soc != 0 %}
-			<button class="button_6" data-toggle="modal" data-target="#borrelModal" style="position:absolute; left:{{x_soc}}%; top:{{y_soc}}%"> 
-			</button>
-  		{% endif %}
-
-		</div>
+		{% include "main/Piechart.html" %}
 
 	</div>
 </div>
@@ -165,7 +138,7 @@ weging_stud_norm : {{weging_stud_norm}} <br> -->
 <div class="panel panel-default ">
 	<div class="panel-heading">
 		<h3 class="panel-title">
-    	    <div class="tooltip_voortgang">Voorgang 
+    	    <div class="tooltip_voortgang">Voortgang 
   				<span class="tooltiptext_voortgang"> 
   					Dit panel laat jouw voortgang zien. <br>
   					<br>
